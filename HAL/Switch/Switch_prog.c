@@ -14,6 +14,8 @@
 
 extern u8 Switch_u8SwitchesMaxNum ;
 extern Switch_t Switch[];
+extern u8 Switch_u8SwitchZero;
+
 
 ES_t Switch_enuInit(void)
 {
@@ -37,7 +39,7 @@ ES_t Switch_enuGetPressed (u8 Copy_u8SwitchNum ,u8 * Copy_pu8SwitchValue)
 {
 	ES_t Local_enuErrorState = ES_NOK;
 
-	if(Copy_u8SwitchNum < Switch_u8SwitchesMaxNum)
+	if( (Copy_u8SwitchNum-=Switch_u8SwitchZero) < Switch_u8SwitchesMaxNum )
 	{
 		Local_enuErrorState = DIO_enuGetPinValue(Switch[Copy_u8SwitchNum].sw_Grp , Switch[Copy_u8SwitchNum].sw_Pin , Copy_pu8SwitchValue);
 	}

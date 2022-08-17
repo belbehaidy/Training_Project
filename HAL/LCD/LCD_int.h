@@ -12,7 +12,7 @@
 /****************************************/
 /*        Text Direction Options		*/
 /****************************************/
-#define ENGLISH		DISPLAY_DIR_RIGHT
+#define ENGLISH		DISPLAY_DIR_RIGHT	//Default
 #define ARABIC		DISPLAY_DIR_LEFT
 
 /****************************************/

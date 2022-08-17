@@ -8,6 +8,9 @@
 #ifndef SWITCH_PRIV_H_
 #define SWITCH_PRIV_H_
 
+#define SWITCH_ZERO		201
+#define SWITCH_ONE		202
+#define SWITCH_TWO		203
 
 
 #endif /* SWITCH_PRIV_H_ */

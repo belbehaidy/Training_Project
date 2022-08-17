@@ -11,8 +11,13 @@
 #include "..\..\MCAL\DIO\DIO_int.h"
 
 #include "Switch_config.h"
+#include "Switch_priv.h"
+
 
 u8 Switch_u8SwitchesMaxNum = SWITCHES_MAX_NUM ;
+u8 Switch_u8SwitchZero = SWITCH_ZERO;
+
+
 
 Switch_t Switch[SWITCHES_MAX_NUM] = {
 											{SW_ZERO_u8GROUP , SW_ZERO_u8PIN , SW_ZERO_u8STATE},

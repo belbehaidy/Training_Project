@@ -4,6 +4,172 @@
  *  Created on: Aug 5, 2022
  *      Author: Ahmed El-Gaafrawy
  */
+#include <util/delay.h>
+#include "../Libraries/stdTypes.h"
+#include "../Libraries/errorState.h"
+
+#include "../MCAL/DIO/DIO_int.h"
+
+#include "../HAL/Keypad/Keypad_int.h"
+#include "../HAL/LCD/LCD_int.h"
+#include "../HAL/LD/LD_int.h"
+#include "../HAL/Switch/Switch_int.h"
+
+u8 Global_u8Power = 0 ,Global_u8Restart = 0 ;
+
+ES_t DetectPowerStatus(void);
+ES_t ReadInputDigit(u8 *Copy_u8Digit);
+
+int
+main(void)
+{
+	ES_t  Local_enuErrorState ;
+	u8 Local_u8Key = KEYPAD_NOT_PRESSED ;
+	s32 Local_s32Num = 0 ;
+
+
+	LCD_enuInit();
+	Keypad_enuInit();
+	LD_enuInit();
+	Switch_enuInit();
+
+
+
+	LCD_enuWriteCommand(0x08); //Turn Display OFF
+
+	do
+	{
+		Local_enuErrorState = DetectPowerStatus();
+	}while(!Global_u8Power && Local_enuErrorState ==ES_OK);
+
+	if(Global_u8Power)
+	{
+		LCD_enuWriteCommand(0x0F);
+
+		for(;;)
+		{
+			if(Global_u8Power)
+			{
+				LCD_enuWriteCommand(0x01);
+				LCD_enuGoToPosition(1,1);
+				LCD_enuWriteString("Number=");
+
+				while(  (Local_enuErrorState = ReadInputDigit(&Local_u8Key) ) == ES_OK  )
+				{
+					if( Local_u8Key != 'C' )
+					{
+						LCD_enuWriteData(Local_u8Key);
+						Local_s32Num = (Local_s32Num*10) + (Local_u8Key - '0');
+						Local_u8Key = KEYPAD_NOT_PRESSED;
+					}
+					else break;
+				}
+				if( Global_u8Restart )
+				{
+					Global_u8Restart = 0;
+					continue;
+				}
+				if(Local_enuErrorState == ES_OK)
+				{
+					LCD_enuWriteCommand(0xC);
+					LCD_enuWriteCommand(0x01);
+					LCD_enuWriteString("Counter=");
+					LCD_enuGoToPosition(2,5);
+					LCD_enuWriteIntegerNum(Local_s32Num);
+					while(1);///////////////////////////////////////////////////////////
+				}
+				else break;
+			}
+			else
+			{
+				LCD_enuWriteCommand(0x01);
+				LCD_enuGoToPosition(2,3);
+				if( Local_enuErrorState == ES_OK  )
+				{
+					LCD_enuWriteString("Bye..Bye..!");
+				}
+				else
+				{
+					LCD_enuWriteString("***ERROR***");
+				}
+			}
+		}
+	}
+	else
+	{
+		LCD_enuWriteCommand(0x01);
+		LCD_enuWriteCommand(0x0C);
+		LCD_enuGoToPosition(1,1);
+		LCD_enuWriteString("Power Switch");
+		LCD_enuGoToPosition(2,1);
+		LCD_enuWriteString("ERROR...!!!");
+		while(1);
+	}
+}
+
+ES_t ReadInputDigit(u8 *Copy_u8Digit)
+{
+	ES_t Local_enuErrorState = ES_NOK;
+
+	if(Copy_u8Digit != NULL)
+	{
+		while( (Local_enuErrorState = Keypad_enuGetPressedKey(Copy_u8Digit)) == ES_OK  &&  *Copy_u8Digit == KEYPAD_NOT_PRESSED )
+		{
+			Local_enuErrorState = Keypad_enuGetPressedKey(Copy_u8Digit);
+		}
+
+		if( (*Copy_u8Digit<'0' || *Copy_u8Digit>'9') && *Copy_u8Digit != 'C' )
+		{
+			Local_enuErrorState = ES_OUT_RANGE;
+			Global_u8Restart = 1 ;
+			LCD_enuGoToPosition(1,5);
+			LCD_enuWriteString("NUMBERS");
+			LCD_enuGoToPosition(2,5);
+			LCD_enuWriteString("ONLY!!!");
+			for(u8 Local_u8Iter = 0; Local_u8Iter<5 ; Local_u8Iter++)
+			{
+				LCD_enuWriteCommand(0x08);
+				_delay_ms(10);
+				LCD_enuWriteCommand(0xC);
+				_delay_ms(300);
+			}
+			_delay_ms(3000);
+		}
+
+	}
+	else Local_enuErrorState = ES_NULL_POINTER;
+
+
+
+	return Local_enuErrorState;
+
+}
+
+ES_t DetectPowerStatus(void)
+{
+	ES_t Local_enuErrorState = ES_NOK;
+	u8 Local_u8SwitchValue;
+
+
+	if( (Local_enuErrorState = Switch_enuGetPressed ( SW_ONE , &Local_u8SwitchValue) ) == ES_OK )
+	{
+		if(Local_u8SwitchValue == DIO_u8HIGH)
+		{
+			_delay_ms(10);
+			if ( ( Local_enuErrorState = Switch_enuGetPressed ( SW_ONE , &Local_u8SwitchValue) ) == ES_OK )
+			{
+				if(Local_u8SwitchValue == DIO_u8HIGH)
+				{
+					Global_u8Power ^= 1 ;
+				}
+			}
+		}
+	}
+
+	return Local_enuErrorState;
+}
+
+/*
 #include "../Libraries/stdTypes.h"
 #include "../Libraries/errorState.h"
 
@@ -95,7 +261,7 @@ main(void) //using Proteus
 		for(;;);
 	}
 }
-
+*/
 /*
 int
 main(void)

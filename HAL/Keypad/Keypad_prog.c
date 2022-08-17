@@ -55,7 +55,7 @@ ES_t Keypad_enuInit(void)
 				}
 			}
 		}
-		if(!Local_u8Flag && Local_enuError[0] == ES_OK && Local_enuError[1] == ES_OK)
+		if( !Local_u8Flag )
 			Local_enuErrorState = ES_OK;
 	}
 	else Local_enuErrorState = ES_OUT_RANGE;
@@ -84,31 +84,27 @@ ES_t Keypad_enuGetPressedKey(u8 * Copy_pu8KeyValue)
 
 				if( (Local_u8RowValue == DIO_u8LOW) && ( Local_enuErrorState == ES_OK) )
 				{
-					_delay_ms(20);
+					_delay_ms(10);
 					Local_enuErrorState = DIO_enuGetPinValue( KeyPadRows[Local_u8RowIter].InputGrp , KeyPadRows[Local_u8RowIter].InputPin , &Local_u8RowValue);
 
-					if( Local_enuErrorState == ES_OK )
+					if( Local_enuErrorState == ES_OK  && Local_u8RowValue == DIO_u8LOW )
 					{
-						if( Local_u8RowValue == DIO_u8LOW )
-						{
-							Local_u8Pressed = 1 ;
-							*Copy_pu8KeyValue = Kpad_u8KeyValues[( (Local_u8RowIter*Kpad_u8ColNum) + Local_u8ColIter) ];
+						Local_u8Pressed = 1 ;
+						*Copy_pu8KeyValue = Kpad_u8KeyValues[( (Local_u8RowIter*Kpad_u8ColNum) + Local_u8ColIter) ];
 
-							while( Local_u8RowValue == DIO_u8LOW  && Local_enuErrorState == ES_OK )
-							{
-								Local_enuErrorState = DIO_enuGetPinValue( KeyPadRows[Local_u8RowIter].InputGrp , KeyPadRows[Local_u8RowIter].InputPin , &Local_u8RowValue);
-							}
-							break;
+						while( Local_u8RowValue == DIO_u8LOW  && Local_enuErrorState == ES_OK )
+						{
+							Local_enuErrorState = DIO_enuGetPinValue( KeyPadRows[Local_u8RowIter].InputGrp , KeyPadRows[Local_u8RowIter].InputPin , &Local_u8RowValue);
 						}
+						break;
 					}
-					else break;
 				}
 			}
 
-			if( Local_enuErrorState == ES_OK )
+			if( (Local_u8Pressed == 1) || (Local_enuErrorState != ES_OK) )
+				break;
+			else
 				Local_enuErrorState = DIO_enuSetPinValue( KeyPadCols[Local_u8ColIter].OutputGrp , KeyPadCols[Local_u8ColIter].OutputPin , DIO_u8HIGH );
-
-			if( (Local_u8Pressed == 1) || (Local_enuErrorState != ES_OK) ) break;
 		}
 	}
 	else Local_enuErrorState = ES_NULL_POINTER;
