@@ -28,4 +28,6 @@ HAL/LD \
 HAL/SevSeg \
 HAL/Switch \
 MCAL/DIO \
+MCAL/EXTI \
+MCAL/GIE \
 

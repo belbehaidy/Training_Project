@@ -84,7 +84,7 @@ ES_t Keypad_enuGetPressedKey(u8 * Copy_pu8KeyValue)
 
 				if( (Local_u8RowValue == DIO_u8LOW) && ( Local_enuErrorState == ES_OK) )
 				{
-					_delay_ms(10);
+					_delay_ms(KEYPAD_BOUNCE_DELAY);
 					Local_enuErrorState = DIO_enuGetPinValue( KeyPadRows[Local_u8RowIter].InputGrp , KeyPadRows[Local_u8RowIter].InputPin , &Local_u8RowValue);
 
 					if( Local_enuErrorState == ES_OK  && Local_u8RowValue == DIO_u8LOW )
@@ -108,6 +108,69 @@ ES_t Keypad_enuGetPressedKey(u8 * Copy_pu8KeyValue)
 		}
 	}
 	else Local_enuErrorState = ES_NULL_POINTER;
+
+	return Local_enuErrorState;//DONE
+}
+
+ES_t Keypad_Sleep(void)
+{
+	ES_t Local_enuErrorState = ES_NOK ;
+	u8 Local_u8Iter=0 ;
+
+	if( (Kpad_u8RowNum <= Kpad_u8MaxSideKeys) && (Kpad_u8ColNum <= Kpad_u8MaxSideKeys ) )
+	{
+		for( ; Local_u8Iter < Kpad_u8RowNum ; Local_u8Iter++)
+		{
+			Local_enuErrorState = DIO_enuSetPinValue( KeyPadRows[Local_u8Iter].InputGrp , KeyPadRows[Local_u8Iter].InputPin , DIO_u8FLOAT	);
+
+			if(Local_enuErrorState != ES_OK  )	break;
+		}
+
+		if( Local_enuErrorState == ES_OK )
+		{
+			for(Local_u8Iter = 0 ; Local_u8Iter < Kpad_u8ColNum ; Local_u8Iter++)
+			{
+				Local_enuErrorState = DIO_enuSetPinValue( KeyPadCols[Local_u8Iter].OutputGrp , KeyPadCols[Local_u8Iter].OutputPin , DIO_u8LOW );
+
+				if(Local_enuErrorState != ES_OK  )	break;
+			}
+		}
+	}
+	else Local_enuErrorState = ES_OUT_RANGE;
+
+	return Local_enuErrorState;//DONE
+}
+
+ES_t Keypad_Awake(void)
+{
+	ES_t Local_enuErrorState = ES_NOK ;
+	u8 Local_u8Iter=0 ;
+
+	if( (Kpad_u8RowNum <= Kpad_u8MaxSideKeys) && (Kpad_u8ColNum <= Kpad_u8MaxSideKeys ) )
+	{
+		for( ; Local_u8Iter < Kpad_u8RowNum ; Local_u8Iter++)
+		{
+			Local_enuErrorState = DIO_enuSetPinValue( KeyPadRows[Local_u8Iter].InputGrp , KeyPadRows[Local_u8Iter].InputPin , KeyPadRows[Local_u8Iter].InputState );
+
+			if(Local_enuErrorState != ES_OK  )	break;
+		}
+
+		if( Local_enuErrorState == ES_OK )
+		{
+			for(Local_u8Iter = 0 ; Local_u8Iter < Kpad_u8ColNum ; Local_u8Iter++)
+			{
+				Local_enuErrorState = DIO_enuSetPinValue( KeyPadCols[Local_u8Iter].OutputGrp , KeyPadCols[Local_u8Iter].OutputPin , DIO_u8HIGH );
+
+				if(Local_enuErrorState != ES_OK  )
+				{
+					break;
+				}
+			}
+
+		}
+
+	}
+	else Local_enuErrorState = ES_OUT_RANGE;
 
 	return Local_enuErrorState;//DONE
 }

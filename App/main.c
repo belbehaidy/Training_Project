@@ -15,9 +15,13 @@
 #include "../HAL/LD/LD_int.h"
 #include "../HAL/Switch/Switch_int.h"
 
-u8 Global_u8Power = 0 ,Global_u8Restart = 0 ;
+#include "App_priv.h"
 
+u8 Global_u8Power = POWER_OFF ,Global_u8Restart = CONTINUE ,Global_u8Counter = NO_COUNT;
+
+ES_t SwitchIsPressed(u8 Copy_u8SwitchNum , u8 Copy_u8PressedValue , u8 *Copy_pu8SwitchStatus);
 ES_t DetectPowerStatus(void);
+ES_t CheckCounterStatus(void);
 ES_t ReadInputDigit(u8 *Copy_u8Digit);
 
 int
@@ -40,19 +44,26 @@ main(void)
 	do
 	{
 		Local_enuErrorState = DetectPowerStatus();
-	}while(!Global_u8Power && Local_enuErrorState ==ES_OK);
+	}while( (Global_u8Power == POWER_OFF) && Local_enuErrorState ==ES_OK);
 
-	if(Global_u8Power)
+	if(Global_u8Power == POWER_ON )
 	{
-		LCD_enuWriteCommand(0x0F);
-
 		for(;;)
 		{
-			if(Global_u8Power)
+			if(Global_u8Power == SHUTDOWN)
 			{
-				LCD_enuWriteCommand(0x01);
-				LCD_enuGoToPosition(1,1);
-				LCD_enuWriteString("Number=");
+				do
+				{
+					Local_enuErrorState = DetectPowerStatus();
+					_delay_ms(100);
+				}while( (Global_u8Power == SHUTDOWN) && Local_enuErrorState ==ES_OK);
+				Keypad_Awake();
+			}
+			if(Global_u8Power == POWER_ON)
+			{
+				DISPLAY_WELCOME_MESSAGE;
+				_delay_ms(5000);
+				DISPLAY_NUMBER_MESSAGE;
 
 				while(  (Local_enuErrorState = ReadInputDigit(&Local_u8Key) ) == ES_OK  )
 				{
@@ -64,34 +75,84 @@ main(void)
 					}
 					else break;
 				}
-				if( Global_u8Restart )
+				if( Global_u8Restart == RESTART)
 				{
-					Global_u8Restart = 0;
+					Global_u8Restart = CONTINUE;
 					continue;
 				}
 				if(Local_enuErrorState == ES_OK)
 				{
-					LCD_enuWriteCommand(0xC);
-					LCD_enuWriteCommand(0x01);
-					LCD_enuWriteString("Counter=");
-					LCD_enuGoToPosition(2,5);
-					LCD_enuWriteIntegerNum(Local_s32Num);
-					while(1);///////////////////////////////////////////////////////////
+					DISPLAY_COUNTER_MESSAGE;
+
+					for(;;)
+					{
+						if( Global_u8Counter != NO_COUNT)
+						{
+							LCD_enuGoToPosition(2,5);
+							LCD_enuWriteIntegerNum(Local_s32Num);
+						}
+						_delay_ms(980);
+
+						if( (Local_enuErrorState = DetectPowerStatus() ) ==ES_OK )
+						{
+							if( Global_u8Power == POWER_OFF)	break;
+						}
+						else break;
+						if( (Local_enuErrorState = CheckCounterStatus() ) ==ES_OK )
+						{
+							switch(Global_u8Counter)
+							{
+							case COUNT_UP	: Local_s32Num++;
+												break;
+							case COUNT_DOWN	: Local_s32Num--;
+												break;
+							case NO_COUNT	: 	break;
+							}
+						}
+						else break;
+
+						////////////////////////Continue from HERE
+
+
+
+
+
+
+					}
+					if( Global_u8Power == POWER_OFF) 	continue;
+
+
+
 				}
 				else break;
 			}
 			else
 			{
 				LCD_enuWriteCommand(0x01);
-				LCD_enuGoToPosition(2,3);
-				if( Local_enuErrorState == ES_OK  )
+				if( Local_enuErrorState == ES_OK && Global_u8Power == POWER_OFF )
 				{
+					Keypad_Sleep();
+					LCD_enuGoToPosition(2,3);
 					LCD_enuWriteString("Bye..Bye..!");
+					_delay_ms(3000);
+					LCD_enuWriteCommand(0x01);
+					LCD_enuWriteCommand(0x08);
+					Global_u8Power = SHUTDOWN;
 				}
 				else
 				{
+					LCD_enuGoToPosition(1,3);
 					LCD_enuWriteString("***ERROR***");
+					LCD_enuGoToPosition(2,6);
+					LCD_enuWriteString("Shutdown?");
+					do
+					{
+						Local_enuErrorState = DetectPowerStatus();
+					}while( (Global_u8Power != POWER_OFF) && Local_enuErrorState ==ES_OK);
+					LCD_enuWriteCommand(0x01);
+					LCD_enuWriteCommand(0x08);
 				}
+
 			}
 		}
 	}
@@ -121,7 +182,7 @@ ES_t ReadInputDigit(u8 *Copy_u8Digit)
 		if( (*Copy_u8Digit<'0' || *Copy_u8Digit>'9') && *Copy_u8Digit != 'C' )
 		{
 			Local_enuErrorState = ES_OUT_RANGE;
-			Global_u8Restart = 1 ;
+			Global_u8Restart = RESTART ;
 			LCD_enuGoToPosition(1,5);
 			LCD_enuWriteString("NUMBERS");
 			LCD_enuGoToPosition(2,5);
@@ -151,23 +212,83 @@ ES_t DetectPowerStatus(void)
 	u8 Local_u8SwitchValue;
 
 
-	if( (Local_enuErrorState = Switch_enuGetPressed ( SW_ONE , &Local_u8SwitchValue) ) == ES_OK )
+	if( (Local_enuErrorState = SwitchIsPressed( POWER_SWITCH , POWER_SWITCH_PRESSED ,&Local_u8SwitchValue) ) == ES_OK )
 	{
-		if(Local_u8SwitchValue == DIO_u8HIGH)
+		if( Local_u8SwitchValue != SWITCH_UNPRESSED && Local_u8SwitchValue == POWER_SWITCH_PRESSED  )
 		{
-			_delay_ms(10);
-			if ( ( Local_enuErrorState = Switch_enuGetPressed ( SW_ONE , &Local_u8SwitchValue) ) == ES_OK )
+			switch(Global_u8Power)
 			{
-				if(Local_u8SwitchValue == DIO_u8HIGH)
-				{
-					Global_u8Power ^= 1 ;
-				}
+				case SHUTDOWN	:
+				case POWER_OFF	: Global_u8Power = POWER_ON;
+									break;
+				case POWER_ON	: Global_u8Power = POWER_OFF;
+									break;
 			}
 		}
 	}
 
 	return Local_enuErrorState;
 }
+
+
+ES_t SwitchIsPressed(u8 Copy_u8SwitchNum , u8 Copy_u8PressedValue , u8 *Copy_pu8SwitchStatus)
+{
+	ES_t Local_enuErrorState = ES_NOK;
+
+	u8 Local_u8SwitchValue ;
+
+	if(Copy_pu8SwitchStatus != NULL)
+	{
+		*Copy_pu8SwitchStatus = SWITCH_UNPRESSED;
+
+		if( Copy_u8SwitchNum == POWER_SWITCH	|| Copy_u8SwitchNum == COUNTER_SWITCH )
+		{
+			if( ( Local_enuErrorState = Switch_enuGetPressed(Copy_u8SwitchNum , &Local_u8SwitchValue) ) == ES_OK )
+			{
+				if( Local_u8SwitchValue == Copy_u8PressedValue)
+				{
+					_delay_ms(SWITCH_BOUNCE_DELAY);
+					Local_enuErrorState = Switch_enuGetPressed(Copy_u8SwitchNum , &Local_u8SwitchValue);
+					if( Local_u8SwitchValue == Copy_u8PressedValue)
+					{
+						*Copy_pu8SwitchStatus = Copy_u8PressedValue;
+					}
+				}
+			}
+		}
+		else Local_enuErrorState = ES_OUT_RANGE ;
+	}
+	else Local_enuErrorState = ES_NULL_POINTER ;
+
+	return Local_enuErrorState;
+}
+
+ES_t CheckCounterStatus(void)
+{
+	ES_t Local_enuErrorState = ES_NOK;
+	u8 Local_u8SwitchValue;
+
+
+	if( (Local_enuErrorState = SwitchIsPressed( COUNTER_SWITCH , COUNTER_SWITCH_PRESSED ,&Local_u8SwitchValue) ) == ES_OK )
+	{
+		if( Local_u8SwitchValue != SWITCH_UNPRESSED && Local_u8SwitchValue == COUNTER_SWITCH_PRESSED)
+		{
+			switch(Global_u8Counter)
+			{
+				case NO_COUNT	: Global_u8Counter = COUNT_UP;
+									break;
+				case COUNT_UP	: Global_u8Counter = COUNT_DOWN;
+									break;
+				case COUNT_DOWN	: Global_u8Counter = NO_COUNT;
+									break;
+			}
+		}
+	}
+
+	return Local_enuErrorState;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*
 #include "../Libraries/stdTypes.h"

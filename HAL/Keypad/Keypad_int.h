@@ -10,6 +10,10 @@
 
 ES_t Keypad_enuInit(void);
 
+ES_t Keypad_Sleep(void);
+
+ES_t Keypad_Awake(void);
+
 ES_t Keypad_enuGetPressedKey(u8 * Copy_pu8KeyValue);
 
 #define KEYPAD_NOT_PRESSED				255

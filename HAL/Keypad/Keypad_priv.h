@@ -8,6 +8,6 @@
 #ifndef HAL_KEYPAD_KEYPAD_PRIV_H_
 #define HAL_KEYPAD_KEYPAD_PRIV_H_
 
-
+#define KEYPAD_BOUNCE_DELAY			3
 
 #endif /* HAL_KEYPAD_KEYPAD_PRIV_H_ */
