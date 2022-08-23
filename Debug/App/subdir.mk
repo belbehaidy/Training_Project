@@ -4,14 +4,17 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../App/HVAC_CONTROL.c \
 ../App/bassem.c \
 ../App/main.c 
 
 OBJS += \
+./App/HVAC_CONTROL.o \
 ./App/bassem.o \
 ./App/main.o 
 
 C_DEPS += \
+./App/HVAC_CONTROL.d \
 ./App/bassem.d \
 ./App/main.d 
 

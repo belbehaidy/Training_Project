@@ -9,10 +9,26 @@
 #ifndef MCAL_EXTI_EXTI_INT_H_
 #define MCAL_EXTI_EXTI_INT_H_
 
+#define	EXTI_NUM			3
+#define BIT_MASK			1
+#define TWO_BITS_MASK		3
+
+#define LOW_LEVEL			55
+#define ANY_LGC_LVL			56
+#define	FALLING_EDGE		57
+#define RISING_EDGE			58
+
+#define	INTERRUPT			59
+#define	POLLING				60
+
+#define INT0				61
+#define INT1				62
+#define INT2				63
+
 //////////////////////////////////////////////////
-//		Interrupt Sense Level Choices			\\
+//		Interrupt Sense Level Choices			//
 //		-----------------------------			//
-//	Choice					Description			\\
+//	Choice					Description			//
 //////////////////////////////////////////////////
 //	LOW_LEVEL		|	Low Level Sense			//
 //	ANY_LGC_LVL		|	Any Logic Level Sense	//
@@ -21,7 +37,7 @@
 //////////////////////////////////////////////////
 
 //////////////////////////////////////
-//			Interrupt Numbers		\\
+//			Interrupt Numbers		//
 //////////////////////////////////////
 //	INT0	|	INT1	|	INT2	//
 //////////////////////////////////////
@@ -34,5 +50,7 @@ ES_t EXTI_enuEnableInterrupt(u8 Copy_u8IntNum);
 ES_t EXTI_enuDisableInterrupt(u8 Copy_u8IntNum);
 
 ES_t EXTI_enuSetSenseLevel(u8 Copy_u8IntNum , u8 Copy_u8SenseLevel);
+
+ES_t EXTI_enuCallBack( void (*Copy_pAppFunction)() , u8 Copy_u8IntNum);
 
 #endif /* MCAL_EXTI_EXTI_INT_H_ */

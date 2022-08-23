@@ -51,6 +51,16 @@
 							<tool id="de.innot.avreclipse.tool.avrdude.app.debug.25846518" name="AVRDude" superClass="de.innot.avreclipse.tool.avrdude.app.debug"/>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="de.innot.avreclipse.configuration.app.debug.545312055.1891732981" name="ADC_priv.h" rcbsApplicability="disable" resourcePath="MCAL/ADC/ADC_priv.h" toolsToInvoke=""/>
+					<fileInfo id="de.innot.avreclipse.configuration.app.debug.545312055.1087384286" name="ADC_int.h" rcbsApplicability="disable" resourcePath="MCAL/ADC/ADC_int.h" toolsToInvoke=""/>
+					<fileInfo id="de.innot.avreclipse.configuration.app.debug.545312055.418616427" name="ADC_config.h" rcbsApplicability="disable" resourcePath="MCAL/ADC/ADC_config.h" toolsToInvoke="">
+						<tool announcement="Invoking: Resource Custom Build Step" command="" customBuildStep="true" id="org.eclipse.cdt.managedbuilder.ui.rcbs.2003680897" name="Resource Custom Build Step">
+							<inputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype.463533" name="Resource Custom Build Step Input Type">
+								<additionalInput kind="additionalinputdependency" paths=""/>
+							</inputType>
+							<outputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype.1088062061" name="Resource Custom Build Step Output Type" outputNames=""/>
+						</tool>
+					</fileInfo>
 					<sourceEntries>
 						<entry excluding="EXTI" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
@@ -119,13 +129,23 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="ATmega32_Maddi_503.de.innot.avreclipse.project.winavr.elf_2.1.0.188579017" name="AVR Cross Target Application" projectType="de.innot.avreclipse.project.winavr.elf_2.1.0"/>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/ATmega32_Maddi_503"/>
+		</configuration>
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/ATmega32_Maddi_503"/>
+		</configuration>
+	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="de.innot.avreclipse.configuration.app.debug.545312055;de.innot.avreclipse.configuration.app.debug.545312055.;de.innot.avreclipse.tool.compiler.winavr.app.debug.1639593163;de.innot.avreclipse.compiler.winavr.input.568500743">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="de.innot.avreclipse.core.AVRGCCManagedMakePerProjectProfileC"/>
+		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="de.innot.avreclipse.configuration.app.release.1153140694;de.innot.avreclipse.configuration.app.release.1153140694.;de.innot.avreclipse.tool.compiler.winavr.app.release.1564913010;de.innot.avreclipse.compiler.winavr.input.698371779">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="de.innot.avreclipse.core.AVRGCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
-	<storageModule moduleId="refreshScope"/>
 </cproject>

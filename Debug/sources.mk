@@ -25,8 +25,10 @@ App \
 HAL/Keypad \
 HAL/LCD \
 HAL/LD \
+HAL/LM35 \
 HAL/SevSeg \
 HAL/Switch \
+MCAL/ADC \
 MCAL/DIO \
 MCAL/EXTI \
 MCAL/GIE \

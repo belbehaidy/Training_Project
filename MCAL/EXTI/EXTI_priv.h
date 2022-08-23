@@ -58,5 +58,7 @@
 #define PIF2_BIT			5						//Peripheral Interrupt Flag Bit Number in GCIF for INT2
 #define ISC2_BIT			6						//Interrupt Sense Bit for INT2 "ISC2" in MCUCSR Register
 
+void ISR_vid( u8 Copy_u8IntNum);
+
 
 #endif /* MCAL_EXTI_EXTI_PRIV_H_ */

@@ -43,10 +43,10 @@ ES_t LCD_enuInit(void)
 
 #elif LCD_MODE == FOUR_BIT
 
-	DIO_enuSetPinValue(D7_GRP , D7_PIN , 0);
-	DIO_enuSetPinValue(D6_GRP , D6_PIN , 0);
-	DIO_enuSetPinValue(D5_GRP , D5_PIN , 1);
-	DIO_enuSetPinValue(D4_GRP , D4_PIN , 0);
+	DIO_enuSetPinValue(D7_GRP , D7_PIN , DIO_u8LOW);
+	DIO_enuSetPinValue(D6_GRP , D6_PIN , DIO_u8LOW);
+	DIO_enuSetPinValue(D5_GRP , D5_PIN , DIO_u8HIGH);
+	DIO_enuSetPinValue(D4_GRP , D4_PIN , DIO_u8LOW);
 
 	DIO_enuSetPinValue(EN_GRP , EN_PIN , DIO_u8HIGH);
 	_delay_ms(1);
@@ -59,7 +59,7 @@ ES_t LCD_enuInit(void)
 #endif
 
 	DIO_enuSetPinValue(RS_GRP , RS_PIN , DIO_u8LOW);
-	LCD_enuWriteNLatch( 0xF );
+	LCD_enuWriteNLatch( 0x8 );//Display still OFF
 
 	DIO_enuSetPinValue(RS_GRP , RS_PIN , DIO_u8LOW);
 	LCD_enuWriteNLatch( 0x1 );

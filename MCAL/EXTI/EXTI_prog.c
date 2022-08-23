@@ -12,6 +12,8 @@
 
 extern u8 EXTI_u8EXTI_Num;
 
+void (*EXTI_ApFunction_AppFun [3] )(void) = { NULL , NULL , NULL } ;
+
 extern 	EXTI_t EXTI_AstrEXTI_Config[EXTI_NUM] ;
 
 
@@ -218,13 +220,36 @@ void __vector_3(void)__attribute__((signal));	//ISR	INT2
 
 void __vector_1(void)
 {
-
+	if ( EXTI_ApFunction_AppFun[0] != NULL)
+	{
+		EXTI_ApFunction_AppFun[0]();
+	}
 }
 void __vector_2(void)
 {
-
+	if ( EXTI_ApFunction_AppFun[1] != NULL)
+	{
+		EXTI_ApFunction_AppFun[1]();
+	}
 }
 void __vector_3(void)
 {
+	if ( EXTI_ApFunction_AppFun[2] != NULL)
+	{
+		EXTI_ApFunction_AppFun[2]();
+	}
+}
 
+ES_t EXTI_enuCallBack( void (*Copy_pAppFunction)() , u8 Copy_u8IntNum)
+{
+	ES_t Local_enuErrorState = ES_NOK;
+
+	if( Copy_pAppFunction != NULL)
+	{
+		EXTI_ApFunction_AppFun[(Copy_u8IntNum -= INT0)] =  Copy_pAppFunction ;
+		Local_enuErrorState = ES_OK;
+	}
+	else Local_enuErrorState = ES_NULL_POINTER;
+
+	return Local_enuErrorState;
 }

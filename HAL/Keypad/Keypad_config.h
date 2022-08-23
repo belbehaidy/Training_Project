@@ -34,26 +34,26 @@ typedef struct
 //columns pins
 
 #define C1_GRP				DIO_u8GROUP_C
-#define C1_PIN				DIO_u8PIN2
+#define C1_PIN				DIO_u8PIN3
 
 #define C2_GRP				DIO_u8GROUP_C
-#define C2_PIN				DIO_u8PIN3
+#define C2_PIN				DIO_u8PIN4
 
 #define C3_GRP				DIO_u8GROUP_C
-#define C3_PIN				DIO_u8PIN4
+#define C3_PIN				DIO_u8PIN5
 
 #define C4_GRP				DIO_u8GROUP_C
-#define C4_PIN				DIO_u8PIN5
+#define C4_PIN				DIO_u8PIN6
 
 
 
 //rows pins
 
 #define R1_GRP				DIO_u8GROUP_D
-#define R1_PIN				DIO_u8PIN2
+#define R1_PIN				DIO_u8PIN0
 
 #define R2_GRP				DIO_u8GROUP_D
-#define R2_PIN				DIO_u8PIN3
+#define R2_PIN				DIO_u8PIN1
 
 #define R3_GRP				DIO_u8GROUP_D
 #define R3_PIN				DIO_u8PIN4

@@ -4,11 +4,14 @@
  *  Created on: Aug 5, 2022
  *      Author: Ahmed El-Gaafrawy
  */
+/*
 #include <util/delay.h>
 #include "../Libraries/stdTypes.h"
 #include "../Libraries/errorState.h"
 
 #include "../MCAL/DIO/DIO_int.h"
+#include "../MCAL/EXTI/EXTI_int.h"
+#include "../MCAL/ADC/ADC_int.h"
 
 #include "../HAL/Keypad/Keypad_int.h"
 #include "../HAL/LCD/LCD_int.h"
@@ -36,6 +39,9 @@ main(void)
 	Keypad_enuInit();
 	LD_enuInit();
 	Switch_enuInit();
+	ADC_enuInit();
+	EXTI_enuInit();
+
 
 
 
@@ -211,6 +217,7 @@ ES_t DetectPowerStatus(void)
 	ES_t Local_enuErrorState = ES_NOK;
 	u8 Local_u8SwitchValue;
 
+	extern u8 Global_u8Power;
 
 	if( (Local_enuErrorState = SwitchIsPressed( POWER_SWITCH , POWER_SWITCH_PRESSED ,&Local_u8SwitchValue) ) == ES_OK )
 	{

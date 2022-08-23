@@ -28,20 +28,20 @@ typedef struct
 /********************************************/
 /*			LED 0 PIN CONFIGURATION			*/
 /********************************************/
-#define LD_ZERO_u8GROUP	DIO_u8GROUP_B
-#define LD_ZERO_u8PIN	DIO_u8PIN4
+#define LD_ZERO_u8GROUP	DIO_u8GROUP_C
+#define LD_ZERO_u8PIN	DIO_u8PIN2
 
 /********************************************/
 /*			LED 1 PIN CONFIGURATION			*/
 /********************************************/
-#define LD_ONE_u8GROUP	DIO_u8GROUP_B
-#define LD_ONE_u8PIN	DIO_u8PIN5
+#define LD_ONE_u8GROUP	DIO_u8GROUP_C
+#define LD_ONE_u8PIN	DIO_u8PIN7
 
 /********************************************/
 /*			LED 2 PIN CONFIGURATION			*/
 /********************************************/
-#define LD_TWO_u8GROUP	DIO_u8GROUP_B
-#define LD_TWO_u8PIN	DIO_u8PIN6
+#define LD_TWO_u8GROUP	DIO_u8GROUP_D
+#define LD_TWO_u8PIN	DIO_u8PIN3
 
 
 #endif /* _LD_CONFIG_H_ */
