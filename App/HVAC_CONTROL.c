@@ -57,6 +57,7 @@ main(void)
 					if( Global_boolSetMode == TRUE)
 					{
 						HVAC_SetTemp();
+						Local_enuSetDisplay = ON;
 					}
 
 					HVAC_CheckTemperatureStatus( Local_u16ActTemp );
@@ -113,8 +114,15 @@ void EXTI_vidISR_INT0(void)
 	{
 		if( ( Global_boolPower == FALSE) && (Local_u8KeyValue == POWER_SW_PRESSED ) )
 		{
-			Global_boolPower = TRUE;
-			Initial_Start = TRUE;
+			_delay_ms( SWITCH_BOUNCE_DELAY );
+			if( Switch_enuGetPressed( POWER_SWITCH , &Local_u8KeyValue) == ES_OK )
+			{
+				if( Local_u8KeyValue ==  POWER_SW_PRESSED )
+				{
+					Global_boolPower = TRUE;
+					Initial_Start = TRUE;
+				}
+			}
 		}
 		else if( (Global_boolPower == TRUE) && (Local_u8KeyValue ==  POWER_SW_PRESSED ) )
 		{
@@ -192,49 +200,51 @@ void HVAC_StandByMode(void)
 
 void HVAC_SetTemp(void)
 {
-	u8 Local_u8KeyValue , Local_u8Counter = 1/*STANDBY_TOTAL_DELAYS*/ , Local_u8SetTemp = Global_u8SetTemp;
+	u8 Local_u8IncKeyValue , Local_u8DecKeyValue ,Local_u8Counter = STANDBY_TOTAL_DELAYS , Local_u8SetTemp = Global_u8SetTemp;
 
 	DISPLAY_SET_MODE_MESSAGE;
+	_delay_ms(500);
 
 	while( Local_u8Counter > 0)
 	{
-		if( Switch_enuGetPressed( INCREMENT_SWITCH , &Local_u8KeyValue) == ES_OK  )
+		if( ( Switch_enuGetPressed( INCREMENT_SWITCH , &Local_u8IncKeyValue) == ES_OK ) && ( Switch_enuGetPressed( DECREMENT_SWITCH , &Local_u8DecKeyValue) == ES_OK ) )
 		{
-			if( Local_u8KeyValue == INC_SW_PRESSED )
+			if( Local_u8IncKeyValue == INC_SW_PRESSED && Local_u8DecKeyValue != DEC_SW_PRESSED )
 			{
-				//_delay_ms( SWITCH_BOUNCE_DELAY );
-				//if( Switch_enuGetPressed( INCREMENT_SWITCH , &Local_u8KeyValue) == ES_OK )
-				//{
-					//if( Local_u8KeyValue == INC_SW_PRESSED )
-					//{
-						Local_u8SetTemp++;
-						//Local_u8Counter = STANDBY_TOTAL_DELAYS ;
+				_delay_ms( SWITCH_BOUNCE_DELAY );
+				if( Switch_enuGetPressed( INCREMENT_SWITCH , &Local_u8IncKeyValue) == ES_OK )
+				{
+					if( Local_u8IncKeyValue == INC_SW_PRESSED )
+					{
+						Global_u8SetTemp++;
+						Local_u8Counter = STANDBY_TOTAL_DELAYS ;
 					}
 				}
-			//}
-			else if( Switch_enuGetPressed( DECREMENT_SWITCH , &Local_u8KeyValue) == ES_OK )
+			}
+			else if( Local_u8DecKeyValue == DEC_SW_PRESSED && Local_u8IncKeyValue != INC_SW_PRESSED )
 			{
-				if( Local_u8KeyValue == INC_SW_PRESSED )
+				_delay_ms( SWITCH_BOUNCE_DELAY );
+				if( Switch_enuGetPressed( DECREMENT_SWITCH , &Local_u8DecKeyValue) == ES_OK )
 				{
-					//_delay_ms( SWITCH_BOUNCE_DELAY/2 );
-					//if( Switch_enuGetPressed( DECREMENT_SWITCH , &Local_u8KeyValue) == ES_OK )
-					//{
-						//if( Local_u8KeyValue == DEC_SW_PRESSED )
-						//{
-							Local_u8SetTemp--;
-							//Local_u8Counter = STANDBY_TOTAL_DELAYS ;
-						//}
+					if( Local_u8DecKeyValue == DEC_SW_PRESSED )
+					{
+						Global_u8SetTemp--;
+						Local_u8Counter = STANDBY_TOTAL_DELAYS ;
 					}
-				//}
-			//}
+				}
+			}
+
 		}
+
 
 		if ( Global_u8SetTemp != Local_u8SetTemp )
 		{
 			DISPLAY_SET_MODE_MESSAGE;
-			Global_u8SetTemp = Local_u8SetTemp ;
+			Local_u8SetTemp = Global_u8SetTemp  ;
 		}
+		else _delay_ms(100);
 
+		_delay_ms( STANDBY_CHECK_DELAY );
 		Local_u8Counter-- ;
 	}
 	Global_boolSetMode = FALSE;

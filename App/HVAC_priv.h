@@ -24,9 +24,9 @@ typedef enum { COLD , NORMAL , HOT } Temp_t;
 #define DISPLAY_SET_MODE_MESSAGE	do{\
 										LCD_enuWriteCommand(0x01);\
 										LCD_enuGoToPosition(1,5);\
-										LCD_enuWriteString("Set Mode");\
+										LCD_enuWriteString("Set mode");\
 										LCD_enuGoToPosition(2,8);\
-										LCD_enuWriteIntegerNum( (s32) Local_u8SetTemp );\
+										LCD_enuWriteIntegerNum( (s32) Global_u8SetTemp );\
 									}while(0)
 #define DISPLAY_STATUS_MESSAGE( x )		do{\
 										LCD_enuWriteCommand(0x01);\

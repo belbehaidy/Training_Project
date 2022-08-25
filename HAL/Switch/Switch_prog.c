@@ -39,7 +39,6 @@ ES_t Switch_enuGetPressed (u8 Copy_u8SwitchNum ,u8 *Copy_pu8SwitchValue)
 {
 	ES_t Local_enuErrorState = ES_NOK;
 
-	*Copy_pu8SwitchValue = SWITCH_UNPRESSED ;
 
 	if( (Copy_u8SwitchNum -= SWITCH_ZERO) < Switch_u8SwitchesMaxNum )
 	{

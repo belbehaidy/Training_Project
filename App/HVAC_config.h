@@ -14,6 +14,7 @@
 /****************************************************/
 /*			Switches Configuration					*/
 /****************************************************/
+#define SWITCH_UNPRESSED			15
 #define SWITCH_BOUNCE_DELAY			10
 #define POWER_OFF_DELAY				500
 
