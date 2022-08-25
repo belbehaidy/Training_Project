@@ -21,7 +21,7 @@
 
 ES_t DIO_enuInit(void)
 {
-	ES_t Local_enuErrorState = ES_NOK;
+	ES_t Local_enuErrorState = ES_OK;
 
 	//
 
@@ -135,7 +135,7 @@ ES_t DIO_enuTogglePinValue(u8 Copy_u8GroupID , u8 Copy_u8PinID)
 	return Local_enuErrorState ;
 }
 
-ES_t DIO_enuGetPinValue(u8 Copy_u8GroupID , u8 Copy_u8PinID , u8 * Copy_pu8Value)
+ES_t DIO_enuGetPinValue(u8 Copy_u8GroupID , u8 Copy_u8PinID , u8 *Copy_pu8Value)
 {
 	ES_t Local_enuErrorState = ES_NOK;
 

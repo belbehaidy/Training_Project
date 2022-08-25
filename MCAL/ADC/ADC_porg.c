@@ -67,9 +67,9 @@ ES_t ADC_enuInit(void)
 	//////////////////////////////////////
 	//	 Setting ADC Interrupt Mode		//
 	//////////////////////////////////////
-#if ( ADC_INTERRUPT_MODE == POLLING )
+#if ( ADC_INTERRUPT_MODE == ADC_POLLING )
 	ADCSRA &= ~(BIT_MASK << ADC_INT_ENABLE_BIT);
-#elif ( ADC_INTERRUPT_MODE == INTERRUPT )
+#elif ( ADC_INTERRUPT_MODE == ADC_INTERRUPT )
 	ADCSRA |= ( BIT_MASK << ADC_INT_ENABLE_BIT);
 #else
 	Local_enuErrorState = ES_OUT_RANGE;
@@ -117,6 +117,43 @@ ES_t ADC_enuInit(void)
 	return Local_enuErrorState;
 }
 
+ES_t ADC_enuSetPreScalar(u8 Copy_u8PreScalarID)
+{
+	ES_t Local_enuErrorState = ES_NOK;
+
+	ADCSRA &= ~(ADC_PRE_SCALAR_BITS_MASK);
+
+	if ( Copy_u8PreScalarID >= PRES_2 && Copy_u8PreScalarID <= PRES_128 )
+	{
+		ADCSRA |= ( (Copy_u8PreScalarID - PRES_0 ) << ADC_PRE_SCALAR_BITS );
+		Local_enuErrorState = ES_OK;
+	}
+	else
+		Local_enuErrorState = ES_OUT_RANGE;
+
+
+	return Local_enuErrorState;
+}
+
+ES_t ADC_enuSetRefVolt(u8 Copy_u8RefVoltID)
+{
+	ES_t Local_enuErrorState = ES_NOK;
+
+	ADMUX &= ~(ADC_REF_SEL_BITS_MASK);
+
+	if ( Copy_u8RefVoltID >= AREF_REF && Copy_u8RefVoltID <= INTERNAL_REF )
+	{
+		ADMUX |= ( (Copy_u8RefVoltID - AREF_REF) << ADC_REF_SEL_BITS);
+		Local_enuErrorState = ES_OK;
+	}
+	else
+		Local_enuErrorState = ES_OUT_RANGE;
+
+
+	return Local_enuErrorState;
+}
+
+
 ES_t ADC_enuSelectChannel(u8 Copy_u8ChannelID)
 {
 	ES_t Local_enuErrorState = ES_NOK;
@@ -152,7 +189,7 @@ ES_t ADC_enuEnableAutoTrigger(u8 Copy_u8TriggerSource)
 		SFIOR |= ( (ADC_INIT_CHANNEL - FREE_RUNNING ) << ADC_TRIGGER_SEL_BITS );
 
 		ADCSRA |= (BIT_MASK << ADC_AUTO_TRIGGER_EN_BIT );
-
+		Local_enuErrorState = ES_OK;
 	}
 	else Local_enuErrorState = ES_OUT_RANGE ;
 
@@ -186,11 +223,10 @@ ES_t ADC_enuRead(u16 *Copy_u16ADC_Value)
 			#warning "ADC_enuRead(u16*): Optimumt Way to read 10-bit Value is to set ADC_ADJUST to RIGHT_ADJUST"
 
 		#endif
+
+		Local_enuErrorState = ES_OK ;
 	}
 	else Local_enuErrorState = ES_NULL_POINTER ;
-
-	if( Local_enuErrorState != ES_NULL_POINTER )
-			Local_enuErrorState = ES_OK ;
 
 	return Local_enuErrorState;
 }
@@ -214,11 +250,10 @@ ES_t ADC_enuReadHigh(u8 *Copy_u8ADC_Value)
 			*Copy_u8ADC_Value = ADCH ;
 
 		#endif
+
+		Local_enuErrorState = ES_OK ;
 	}
 	else Local_enuErrorState = ES_NULL_POINTER ;
-
-	if( Local_enuErrorState != ES_NULL_POINTER )
-			Local_enuErrorState = ES_OK ;
 
 	return Local_enuErrorState;
 }
@@ -226,6 +261,8 @@ ES_t ADC_enuReadHigh(u8 *Copy_u8ADC_Value)
 ES_t ADC_enuPollingRead(u16 *Copy_u16ADC_Value)
 {
 	ES_t Local_enuErrorState = ES_NOK;
+
+	while( !( ( ADCSRA >> ADC_INT_FLAG_BIT ) & BIT_MASK ) );
 
 	if( Copy_u16ADC_Value != NULL)
 	{
@@ -242,14 +279,46 @@ ES_t ADC_enuPollingRead(u16 *Copy_u16ADC_Value)
 		#warning "ADC_enuRead(u16*): Optimum Way to read 10-bit Value is to set ADC_ADJUST to RIGHT_ADJUST"
 
 #endif
+		Local_enuErrorState = ES_OK ;
 	}
 	else Local_enuErrorState = ES_NULL_POINTER ;
 
-	if( Local_enuErrorState != ES_NULL_POINTER )
-		Local_enuErrorState = ES_OK ;
+	ADCSRA |= (BIT_MASK << ADC_INT_FLAG_BIT );
 
 	return Local_enuErrorState;
 }
+
+ES_t ADC_enuPollingReadHigh(u8 *Copy_u8ADC_Value)
+
+{
+	ES_t Local_enuErrorState = ES_NOK;
+
+	while( !( ( ADCSRA >> ADC_INT_FLAG_BIT ) & BIT_MASK ) );
+
+	if( Copy_u8ADC_Value != NULL)
+	{
+		#if ( ADC_ADJUST == RIGHT_ADJUST)
+
+			*Copy_u8ADC_Value  = ( ADCL >> 2 );
+			*Copy_u8ADC_Value |= ( ADCH << 6 );
+
+			#warning "ADC_enuReadHigh(u8*): Optimum Way to read High is to set ADC_ADJUST to LEFT_ADJUST"
+
+		#elif ( ADC_ADJUST == LEFT_ADJUST)
+
+			*Copy_u8ADC_Value = ADCH ;
+
+		#endif
+
+		Local_enuErrorState = ES_OK ;
+	}
+	else Local_enuErrorState = ES_NULL_POINTER ;
+
+	ADCSRA |= (BIT_MASK << ADC_INT_FLAG_BIT );
+
+	return Local_enuErrorState;
+}
+
 
 ES_t ADC_enuCallBack(void ( *Copy_pFunAppFun )(void))
 {
@@ -269,26 +338,26 @@ ES_t ADC_enuEnable(void)
 {
 
 	ADCSRA |= ( BIT_MASK << ADC_ENABLE_BIT );
-	return ES_NOK;
+	return ES_OK;
 }
 
 ES_t ADC_enuDisable(void)
 
 {
 	ADCSRA &= ~( BIT_MASK << ADC_ENABLE_BIT );
-	return ES_NOK;
+	return ES_OK;
 }
 
 ES_t ADC_enuEnableInterrupt(void)
 {
 	ADCSRA |= ( BIT_MASK << ADC_ENABLE_BIT );
-	return ES_NOK;
+	return ES_OK;
 }
 
 ES_t ADC_enuDisableInterrupt(void)
 {
 	ADCSRA &= ~( BIT_MASK << ADC_ENABLE_BIT );
-	return ES_NOK;
+	return ES_OK;
 }
 
 

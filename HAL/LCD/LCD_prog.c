@@ -59,24 +59,24 @@ ES_t LCD_enuInit(void)
 #endif
 
 	DIO_enuSetPinValue(RS_GRP , RS_PIN , DIO_u8LOW);
-	LCD_enuWriteNLatch( 0x8 );//Display still OFF
+	LCD_enuWriteNLatch( 0x08 );//Display still OFF
 
 	DIO_enuSetPinValue(RS_GRP , RS_PIN , DIO_u8LOW);
-	LCD_enuWriteNLatch( 0x1 );
+	LCD_enuWriteNLatch( 0x01 );//Clears Display Data
 
 	DIO_enuSetPinValue(RS_GRP , RS_PIN , DIO_u8LOW);
-	LCD_enuWriteNLatch( 0x6 );
+	LCD_enuWriteNLatch( 0x06 );
 
 
 
-	return Local_enuErrorState;
+	return Local_enuErrorState = ES_OK; //////////////////////////////////////////////////NEEDS ADJUSTMENT for error handling
 }
 
 ES_t LCD_enuWriteData(u8 Copy_u8Data)
 {
 	ES_t Local_enuErrorState = ES_NOK;
 
-	DIO_enuSetPinValue(RS_GRP , RS_PIN , DIO_u8HIGH);
+	Local_enuErrorState = DIO_enuSetPinValue(RS_GRP , RS_PIN , DIO_u8HIGH);
 	LCD_enuWriteNLatch( Copy_u8Data );
 
 	return Local_enuErrorState;
@@ -86,7 +86,7 @@ ES_t LCD_enuWriteCommand(u8 Copy_u8Cmnd)
 {
 	ES_t Local_enuErrorState = ES_NOK;
 
-	DIO_enuSetPinValue(RS_GRP , RS_PIN , DIO_u8LOW);
+	Local_enuErrorState = DIO_enuSetPinValue(RS_GRP , RS_PIN , DIO_u8LOW);
 	LCD_enuWriteNLatch( Copy_u8Cmnd );
 
 
@@ -99,7 +99,7 @@ ES_t LCD_enuWriteString(const char * Copy_pcString)
 
 	while (*Copy_pcString)
 	{
-		DIO_enuSetPinValue(RS_GRP , RS_PIN , DIO_u8HIGH);
+		Local_enuErrorState = DIO_enuSetPinValue(RS_GRP , RS_PIN , DIO_u8HIGH);
 		LCD_enuWriteNLatch( *Copy_pcString++ );
 	}
 
@@ -114,7 +114,7 @@ ES_t LCD_enuGoToPosition(u8 Copy_u8Row , u8 Copy_u8Column)
 	if (Copy_u8Row >= 1 && Copy_u8Row <=2 &&
 			Copy_u8Column >=1 && Copy_u8Column <=16)
 	{
-		DIO_enuSetPinValue(RS_GRP , RS_PIN , DIO_u8LOW);
+		Local_enuErrorState = DIO_enuSetPinValue(RS_GRP , RS_PIN , DIO_u8LOW);
 		LCD_enuWriteNLatch( 0x80 + ( Copy_u8Row - 1 )*0x40 + ( Copy_u8Column - 1 ) );
 	}
 	return Local_enuErrorState;
@@ -167,6 +167,7 @@ static ES_t LCD_enuWriteNLatch(u8 Copy_u8Byte)
 #else
 #error "LCD mode is wrong ya 7aywan"
 #endif
+
 	return ES_OK;
 }
 

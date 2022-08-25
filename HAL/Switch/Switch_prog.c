@@ -4,6 +4,7 @@
  *  Created on: Aug 6, 2022
  *      Author: Ahmed El-Gaafrawy
  */
+#include <util/delay.h>
 #include "../../Libraries/stdTypes.h"
 #include "../../Libraries/errorState.h"
 
@@ -14,7 +15,6 @@
 
 extern u8 Switch_u8SwitchesMaxNum ;
 extern Switch_t Switch[];
-extern u8 Switch_u8SwitchZero;
 
 
 ES_t Switch_enuInit(void)
@@ -35,13 +35,15 @@ ES_t Switch_enuInit(void)
 	return Local_enuErrorState ;
 }
 
-ES_t Switch_enuGetPressed (u8 Copy_u8SwitchNum ,u8 * Copy_pu8SwitchValue)
+ES_t Switch_enuGetPressed (u8 Copy_u8SwitchNum ,u8 *Copy_pu8SwitchValue)
 {
 	ES_t Local_enuErrorState = ES_NOK;
 
-	if( (Copy_u8SwitchNum-=Switch_u8SwitchZero) < Switch_u8SwitchesMaxNum )
+	*Copy_pu8SwitchValue = SWITCH_UNPRESSED ;
+
+	if( (Copy_u8SwitchNum -= SWITCH_ZERO) < Switch_u8SwitchesMaxNum )
 	{
-		Local_enuErrorState = DIO_enuGetPinValue(Switch[Copy_u8SwitchNum].sw_Grp , Switch[Copy_u8SwitchNum].sw_Pin , Copy_pu8SwitchValue);
+		Local_enuErrorState =  DIO_enuGetPinValue(Switch[Copy_u8SwitchNum].sw_Grp , Switch[Copy_u8SwitchNum].sw_Pin , Copy_pu8SwitchValue ) ;
 	}
 	else Local_enuErrorState = ES_OUT_RANGE ;
 

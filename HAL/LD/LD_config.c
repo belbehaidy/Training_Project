@@ -13,21 +13,7 @@
 #include "LD_priv.h"
 
 
-#if( LD_SET_MODE == ACTIVE_HIGH )
-#define LD_MODE 	ACTIVE_HIGH
-#define LD_u8ON		DIO_u8HIGH
-#define LD_u8OFF	DIO_u8LOW
-#elif( LD_SET_MODE == ACTIVE_LOW )
-#define LD_MODE		ACTIVE_LOW
-#define LD_u8ON		DIO_u8LOW
-#define LD_u8OFF	DIO_u8HIGH
-#endif
-
-
 u8 LD_u8LD_MaxNum = LD_MAX_NUM ;
-u8 LD_Mode = LD_MODE;
-u8 LD_u8On = LD_u8ON;
-u8 LD_u8Off = LD_u8OFF;
 
 
 LD_t LD[LD_MAX_NUM] =	{

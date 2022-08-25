@@ -8,9 +8,14 @@
 #ifndef SWITCH_PRIV_H_
 #define SWITCH_PRIV_H_
 
-#define SWITCH_ZERO		201
-#define SWITCH_ONE		202
-#define SWITCH_TWO		203
+#define SWITCH_BOUNCE_DELAY		4
+#define SWITCH_UNPRESSED		15
+#define SWITCH_IS_PRESSED		25
+
+
+#define SWITCH_ZERO				201
+#define SWITCH_ONE				202
+#define SWITCH_TWO				203
 
 
 #endif /* SWITCH_PRIV_H_ */

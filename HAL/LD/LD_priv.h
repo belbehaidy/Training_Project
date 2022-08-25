@@ -8,8 +8,9 @@
 #ifndef LD_PRIV_H_
 #define LD_PRIV_H_
 
-#define ACTIVE_HIGH	65
-#define ACTIVE_LOW	66
+#define LD_ZERO			30
+#define LD_ONE			31
+#define LD_TWO			32
 
 
 #endif /* LD_PRIV_H_ */

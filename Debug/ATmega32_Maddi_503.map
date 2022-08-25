@@ -47,12 +47,6 @@ d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\lib
 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clz.o)
                               d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clzsi2.o) (__clz_tab)
 
-Allocating common symbols
-Common symbol       size              file
-
-Global_u16TempRead  0x2               ./App/HVAC_CONTROL.o
-Global_u16PrevRead  0x2               ./App/HVAC_CONTROL.o
-
 Memory Configuration
 
 Name             Origin             Length             Attributes
@@ -180,7 +174,7 @@ LOAD d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000     0x493c
+.text           0x00000000     0x4a56
  *(.vectors)
  .vectors       0x00000000       0x54 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
                 0x00000000                __vectors
@@ -344,186 +338,198 @@ LOAD d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr
                 0x00001420       0x54 ./MCAL/EXTI/EXTI_prog.o
                 0x00001420                EXTI_enuCallBack
  .text.DIO_enuInit
-                0x00001474       0x18 ./MCAL/DIO/DIO_prog.o
+                0x00001474       0x16 ./MCAL/DIO/DIO_prog.o
                 0x00001474                DIO_enuInit
  .text.DIO_enuSetPinDirection
-                0x0000148c      0x1d8 ./MCAL/DIO/DIO_prog.o
-                0x0000148c                DIO_enuSetPinDirection
+                0x0000148a      0x1d8 ./MCAL/DIO/DIO_prog.o
+                0x0000148a                DIO_enuSetPinDirection
  .text.DIO_enuSetPinValue
-                0x00001664      0x1de ./MCAL/DIO/DIO_prog.o
-                0x00001664                DIO_enuSetPinValue
+                0x00001662      0x1de ./MCAL/DIO/DIO_prog.o
+                0x00001662                DIO_enuSetPinValue
  .text.DIO_enuTogglePinValue
-                0x00001842      0x11c ./MCAL/DIO/DIO_prog.o
-                0x00001842                DIO_enuTogglePinValue
+                0x00001840      0x11c ./MCAL/DIO/DIO_prog.o
+                0x00001840                DIO_enuTogglePinValue
  .text.DIO_enuGetPinValue
-                0x0000195e      0x13c ./MCAL/DIO/DIO_prog.o
-                0x0000195e                DIO_enuGetPinValue
+                0x0000195c      0x13c ./MCAL/DIO/DIO_prog.o
+                0x0000195c                DIO_enuGetPinValue
  .text.ADC_enuInit
-                0x00001a9a       0xc6 ./MCAL/ADC/ADC_porg.o
-                0x00001a9a                ADC_enuInit
+                0x00001a98       0xc8 ./MCAL/ADC/ADC_porg.o
+                0x00001a98                ADC_enuInit
+ .text.ADC_enuSetPreScalar
+                0x00001b60       0x52 ./MCAL/ADC/ADC_porg.o
+                0x00001b60                ADC_enuSetPreScalar
+ .text.ADC_enuSetRefVolt
+                0x00001bb2       0x6a ./MCAL/ADC/ADC_porg.o
+                0x00001bb2                ADC_enuSetRefVolt
  .text.ADC_enuSelectChannel
-                0x00001b60       0x4e ./MCAL/ADC/ADC_porg.o
-                0x00001b60                ADC_enuSelectChannel
+                0x00001c1c       0x4e ./MCAL/ADC/ADC_porg.o
+                0x00001c1c                ADC_enuSelectChannel
  .text.ADC_enuStartConversion
-                0x00001bae       0x1e ./MCAL/ADC/ADC_porg.o
-                0x00001bae                ADC_enuStartConversion
+                0x00001c6a       0x1e ./MCAL/ADC/ADC_porg.o
+                0x00001c6a                ADC_enuStartConversion
  .text.ADC_enuEnableAutoTrigger
-                0x00001bcc       0x66 ./MCAL/ADC/ADC_porg.o
-                0x00001bcc                ADC_enuEnableAutoTrigger
+                0x00001c88       0x68 ./MCAL/ADC/ADC_porg.o
+                0x00001c88                ADC_enuEnableAutoTrigger
  .text.ADC_enuDisableAutoTrigger
-                0x00001c32       0x1e ./MCAL/ADC/ADC_porg.o
-                0x00001c32                ADC_enuDisableAutoTrigger
+                0x00001cf0       0x1e ./MCAL/ADC/ADC_porg.o
+                0x00001cf0                ADC_enuDisableAutoTrigger
  .text.ADC_enuRead
-                0x00001c50       0x78 ./MCAL/ADC/ADC_porg.o
-                0x00001c50                ADC_enuRead
+                0x00001d0e       0x66 ./MCAL/ADC/ADC_porg.o
+                0x00001d0e                ADC_enuRead
  .text.ADC_enuReadHigh
-                0x00001cc8       0x44 ./MCAL/ADC/ADC_porg.o
-                0x00001cc8                ADC_enuReadHigh
+                0x00001d74       0x6e ./MCAL/ADC/ADC_porg.o
+                0x00001d74                ADC_enuReadHigh
  .text.ADC_enuPollingRead
-                0x00001d0c       0x78 ./MCAL/ADC/ADC_porg.o
-                0x00001d0c                ADC_enuPollingRead
+                0x00001de2       0x8a ./MCAL/ADC/ADC_porg.o
+                0x00001de2                ADC_enuPollingRead
+ .text.ADC_enuPollingReadHigh
+                0x00001e6c       0x92 ./MCAL/ADC/ADC_porg.o
+                0x00001e6c                ADC_enuPollingReadHigh
  .text.ADC_enuCallBack
-                0x00001d84       0x3e ./MCAL/ADC/ADC_porg.o
-                0x00001d84                ADC_enuCallBack
+                0x00001efe       0x3e ./MCAL/ADC/ADC_porg.o
+                0x00001efe                ADC_enuCallBack
  .text.ADC_enuEnable
-                0x00001dc2       0x1e ./MCAL/ADC/ADC_porg.o
-                0x00001dc2                ADC_enuEnable
+                0x00001f3c       0x1e ./MCAL/ADC/ADC_porg.o
+                0x00001f3c                ADC_enuEnable
  .text.ADC_enuDisable
-                0x00001de0       0x1e ./MCAL/ADC/ADC_porg.o
-                0x00001de0                ADC_enuDisable
+                0x00001f5a       0x1e ./MCAL/ADC/ADC_porg.o
+                0x00001f5a                ADC_enuDisable
  .text.ADC_enuEnableInterrupt
-                0x00001dfe       0x1e ./MCAL/ADC/ADC_porg.o
-                0x00001dfe                ADC_enuEnableInterrupt
+                0x00001f78       0x1e ./MCAL/ADC/ADC_porg.o
+                0x00001f78                ADC_enuEnableInterrupt
  .text.ADC_enuDisableInterrupt
-                0x00001e1c       0x1e ./MCAL/ADC/ADC_porg.o
-                0x00001e1c                ADC_enuDisableInterrupt
+                0x00001f96       0x1e ./MCAL/ADC/ADC_porg.o
+                0x00001f96                ADC_enuDisableInterrupt
  .text.__vector_16
-                0x00001e3a       0x66 ./MCAL/ADC/ADC_porg.o
-                0x00001e3a                __vector_16
+                0x00001fb4       0x66 ./MCAL/ADC/ADC_porg.o
+                0x00001fb4                __vector_16
  .text.Switch_enuInit
-                0x00001ea0       0xd6 ./HAL/Switch/Switch_prog.o
-                0x00001ea0                Switch_enuInit
+                0x0000201a       0xde ./HAL/Switch/Switch_prog.o
+                0x0000201a                Switch_enuInit
  .text.Switch_enuGetPressed
-                0x00001f76       0x7c ./HAL/Switch/Switch_prog.o
-                0x00001f76                Switch_enuGetPressed
+                0x000020f8       0x84 ./HAL/Switch/Switch_prog.o
+                0x000020f8                Switch_enuGetPressed
  .text.SevSeg_enuInit
-                0x00001ff2      0x1aa ./HAL/SevSeg/SevSeg_prog.o
-                0x00001ff2                SevSeg_enuInit
+                0x0000217c      0x1aa ./HAL/SevSeg/SevSeg_prog.o
+                0x0000217c                SevSeg_enuInit
  .text.SevSeg_enuSetDigitValue
-                0x0000219c       0xec ./HAL/SevSeg/SevSeg_prog.o
-                0x0000219c                SevSeg_enuSetDigitValue
+                0x00002326       0xec ./HAL/SevSeg/SevSeg_prog.o
+                0x00002326                SevSeg_enuSetDigitValue
  .text.SevSeg_enuSetDIPValue
-                0x00002288       0xa2 ./HAL/SevSeg/SevSeg_prog.o
-                0x00002288                SevSeg_enuSetDIPValue
+                0x00002412       0xa2 ./HAL/SevSeg/SevSeg_prog.o
+                0x00002412                SevSeg_enuSetDIPValue
  .text.SevSeg_enuFrameDelay
-                0x0000232a       0x5a ./HAL/SevSeg/SevSeg_prog.o
-                0x0000232a                SevSeg_enuFrameDelay
+                0x000024b4       0x5a ./HAL/SevSeg/SevSeg_prog.o
+                0x000024b4                SevSeg_enuFrameDelay
  .text.SevSeg_enuModuleControl
-                0x00002384      0x10a ./HAL/SevSeg/SevSeg_prog.o
-                0x00002384                SevSeg_enuModuleControl
+                0x0000250e      0x10a ./HAL/SevSeg/SevSeg_prog.o
+                0x0000250e                SevSeg_enuModuleControl
  .text.LM35_enuInit
-                0x0000248e       0x8c ./HAL/LM35/LM35_prog.o
-                0x0000248e                LM35_enuInit
+                0x00002618       0x8c ./HAL/LM35/LM35_prog.o
+                0x00002618                LM35_enuInit
  .text.LD_enuInit
-                0x0000251a       0xcc ./HAL/LD/LD_prog.o
-                0x0000251a                LD_enuInit
+                0x000026a4       0xae ./HAL/LD/LD_prog.o
+                0x000026a4                LD_enuInit
  .text.LD_enuSetState
-                0x000025e6       0x92 ./HAL/LD/LD_prog.o
-                0x000025e6                LD_enuSetState
+                0x00002752       0x7a ./HAL/LD/LD_prog.o
+                0x00002752                LD_enuSetState
  .text.LCD_enuInit
-                0x00002678      0x39a ./HAL/LCD/LCD_prog.o
-                0x00002678                LCD_enuInit
+                0x000027cc      0x39c ./HAL/LCD/LCD_prog.o
+                0x000027cc                LCD_enuInit
  .text.LCD_enuWriteData
-                0x00002a12       0x2c ./HAL/LCD/LCD_prog.o
-                0x00002a12                LCD_enuWriteData
+                0x00002b68       0x2e ./HAL/LCD/LCD_prog.o
+                0x00002b68                LCD_enuWriteData
  .text.LCD_enuWriteCommand
-                0x00002a3e       0x2c ./HAL/LCD/LCD_prog.o
-                0x00002a3e                LCD_enuWriteCommand
+                0x00002b96       0x2e ./HAL/LCD/LCD_prog.o
+                0x00002b96                LCD_enuWriteCommand
  .text.LCD_enuWriteString
-                0x00002a6a       0x4e ./HAL/LCD/LCD_prog.o
-                0x00002a6a                LCD_enuWriteString
+                0x00002bc4       0x50 ./HAL/LCD/LCD_prog.o
+                0x00002bc4                LCD_enuWriteString
  .text.LCD_enuGoToPosition
-                0x00002ab8       0x6a ./HAL/LCD/LCD_prog.o
-                0x00002ab8                LCD_enuGoToPosition
+                0x00002c14       0x6c ./HAL/LCD/LCD_prog.o
+                0x00002c14                LCD_enuGoToPosition
  .text.LCD_enuWriteNLatch
-                0x00002b22      0x498 ./HAL/LCD/LCD_prog.o
+                0x00002c80      0x498 ./HAL/LCD/LCD_prog.o
  .text.LCD_enuWriteIntegerNum
-                0x00002fba      0x23a ./HAL/LCD/LCD_prog.o
-                0x00002fba                LCD_enuWriteIntegerNum
+                0x00003118      0x23a ./HAL/LCD/LCD_prog.o
+                0x00003118                LCD_enuWriteIntegerNum
  .text.LCD_enuWriteFloatNum
-                0x000031f4      0x39e ./HAL/LCD/LCD_prog.o
-                0x000031f4                LCD_enuWriteFloatNum
+                0x00003352      0x39e ./HAL/LCD/LCD_prog.o
+                0x00003352                LCD_enuWriteFloatNum
  .text.LCD_enuWriteExtraPattern
-                0x00003592      0x15c ./HAL/LCD/LCD_prog.o
-                0x00003592                LCD_enuWriteExtraPattern
+                0x000036f0      0x15c ./HAL/LCD/LCD_prog.o
+                0x000036f0                LCD_enuWriteExtraPattern
  .text.LCD_enuSetTextDirection
-                0x000036ee       0x8c ./HAL/LCD/LCD_prog.o
-                0x000036ee                LCD_enuSetTextDirection
+                0x0000384c       0x8c ./HAL/LCD/LCD_prog.o
+                0x0000384c                LCD_enuSetTextDirection
  .text.Keypad_enuInit
-                0x0000377a      0x198 ./HAL/Keypad/Keypad_prog.o
-                0x0000377a                Keypad_enuInit
+                0x000038d8      0x198 ./HAL/Keypad/Keypad_prog.o
+                0x000038d8                Keypad_enuInit
  .text.Keypad_enuGetPressedKey
-                0x00003912      0x300 ./HAL/Keypad/Keypad_prog.o
-                0x00003912                Keypad_enuGetPressedKey
+                0x00003a70      0x300 ./HAL/Keypad/Keypad_prog.o
+                0x00003a70                Keypad_enuGetPressedKey
  .text.Keypad_Sleep
-                0x00003c12       0xe2 ./HAL/Keypad/Keypad_prog.o
-                0x00003c12                Keypad_Sleep
+                0x00003d70       0xe2 ./HAL/Keypad/Keypad_prog.o
+                0x00003d70                Keypad_Sleep
  .text.Keypad_Awake
-                0x00003cf4       0xfa ./HAL/Keypad/Keypad_prog.o
-                0x00003cf4                Keypad_Awake
- .text.main     0x00003dee      0x16a ./App/HVAC_CONTROL.o
-                0x00003dee                main
+                0x00003e52       0xfa ./HAL/Keypad/Keypad_prog.o
+                0x00003e52                Keypad_Awake
+ .text.main     0x00003f4c      0x122 ./App/HVAC_CONTROL.o
+                0x00003f4c                main
  .text.HVAC_enuInit
-                0x00003f58       0x3a ./App/HVAC_CONTROL.o
-                0x00003f58                HVAC_enuInit
+                0x0000406e       0x3a ./App/HVAC_CONTROL.o
+                0x0000406e                HVAC_enuInit
  .text.ADC_vidISR
-                0x00003f92       0x1a ./App/HVAC_CONTROL.o
-                0x00003f92                ADC_vidISR
+                0x000040a8       0x1e ./App/HVAC_CONTROL.o
+                0x000040a8                ADC_vidISR
  .text.EXTI_vidISR_INT0
-                0x00003fac      0x26a ./App/HVAC_CONTROL.o
-                0x00003fac                EXTI_vidISR_INT0
+                0x000040c6      0x174 ./App/HVAC_CONTROL.o
+                0x000040c6                EXTI_vidISR_INT0
  .text.HVAC_enuSetup
-                0x00004216       0xb2 ./App/HVAC_CONTROL.o
-                0x00004216                HVAC_enuSetup
+                0x0000423a       0x90 ./App/HVAC_CONTROL.o
+                0x0000423a                HVAC_enuSetup
  .text.HVAC_Awake
-                0x000042c8       0xac ./App/HVAC_CONTROL.o
-                0x000042c8                HVAC_Awake
+                0x000042ca      0x140 ./App/HVAC_CONTROL.o
+                0x000042ca                HVAC_Awake
  .text.HVAC_Sleep
-                0x00004374      0x154 ./App/HVAC_CONTROL.o
-                0x00004374                HVAC_Sleep
+                0x0000440a      0x14c ./App/HVAC_CONTROL.o
+                0x0000440a                HVAC_Sleep
  .text.HVAC_StandByMode
-                0x000044c8      0x138 ./App/HVAC_CONTROL.o
-                0x000044c8                HVAC_StandByMode
+                0x00004556      0x136 ./App/HVAC_CONTROL.o
+                0x00004556                HVAC_StandByMode
  .text.HVAC_SetTemp
-                0x00004600      0x118 ./App/HVAC_CONTROL.o
-                0x00004600                HVAC_SetTemp
+                0x0000468c       0xe6 ./App/HVAC_CONTROL.o
+                0x0000468c                HVAC_SetTemp
  .text.HVAC_CheckTemperatureStatus
-                0x00004718       0x9c ./App/HVAC_CONTROL.o
-                0x00004718                HVAC_CheckTemperatureStatus
+                0x00004772       0xa0 ./App/HVAC_CONTROL.o
+                0x00004772                HVAC_CheckTemperatureStatus
  .text.HVAC_AdjustCompressorStatus
-                0x000047b4       0x4e ./App/HVAC_CONTROL.o
-                0x000047b4                HVAC_AdjustCompressorStatus
- .text.libgcc   0x00004802       0x28 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodhi4.o)
-                0x00004802                __udivmodhi4
- .text.libgcc   0x0000482a       0x26 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodhi4.o)
-                0x0000482a                __divmodhi4
-                0x0000482a                _div
- .text.libgcc   0x00004850       0x44 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
-                0x00004850                __udivmodsi4
- .text.libgcc   0x00004894       0x36 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodsi4.o)
-                0x00004894                __divmodsi4
- .text.libgcc   0x000048ca        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
- .text.libgcc   0x000048ca        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
- .text.libgcc   0x000048ca        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
- .text.libgcc   0x000048ca       0x38 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_prologue.o)
-                0x000048ca                __prologue_saves__
- .text.libgcc   0x00004902       0x36 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_epilogue.o)
-                0x00004902                __epilogue_restores__
-                0x00004938                . = ALIGN (0x2)
+                0x00004812       0x4e ./App/HVAC_CONTROL.o
+                0x00004812                HVAC_AdjustCompressorStatus
+ .text.HVAC_UpdateReading
+                0x00004860       0xbc ./App/HVAC_CONTROL.o
+                0x00004860                HVAC_UpdateReading
+ .text.libgcc   0x0000491c       0x28 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodhi4.o)
+                0x0000491c                __udivmodhi4
+ .text.libgcc   0x00004944       0x26 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodhi4.o)
+                0x00004944                __divmodhi4
+                0x00004944                _div
+ .text.libgcc   0x0000496a       0x44 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
+                0x0000496a                __udivmodsi4
+ .text.libgcc   0x000049ae       0x36 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodsi4.o)
+                0x000049ae                __divmodsi4
+ .text.libgcc   0x000049e4        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .text.libgcc   0x000049e4        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+ .text.libgcc   0x000049e4        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+ .text.libgcc   0x000049e4       0x38 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_prologue.o)
+                0x000049e4                __prologue_saves__
+ .text.libgcc   0x00004a1c       0x36 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_epilogue.o)
+                0x00004a1c                __epilogue_restores__
+                0x00004a52                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00004938        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
-                0x00004938                exit
-                0x00004938                _exit
+ .fini9         0x00004a52        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+                0x00004a52                exit
+                0x00004a52                _exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -542,11 +548,11 @@ LOAD d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00004938        0x4 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .fini0         0x00004a52        0x4 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
  *(.fini0)
-                0x0000493c                _etext = .
+                0x00004a56                _etext = .
 
-.data           0x00800060      0x1a4 load address 0x0000493c
+.data           0x00800060      0x19e load address 0x00004a56
                 0x00800060                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00800060        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
@@ -604,149 +610,140 @@ LOAD d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr
  .data.Switch_u8SwitchesMaxNum
                 0x008001a0        0x1 ./HAL/Switch/Switch_config.o
                 0x008001a0                Switch_u8SwitchesMaxNum
- .data.Switch_u8SwitchZero
-                0x008001a1        0x1 ./HAL/Switch/Switch_config.o
-                0x008001a1                Switch_u8SwitchZero
- .data.Switch   0x008001a2        0xc ./HAL/Switch/Switch_config.o
-                0x008001a2                Switch
+ .data.Switch   0x008001a1        0x9 ./HAL/Switch/Switch_config.o
+                0x008001a1                Switch
  .data.SevSeg_u8MaxModules
-                0x008001ae        0x1 ./HAL/SevSeg/SevSeg_config.o
-                0x008001ae                SevSeg_u8MaxModules
+                0x008001aa        0x1 ./HAL/SevSeg/SevSeg_config.o
+                0x008001aa                SevSeg_u8MaxModules
  .data.ModuleValuePins
-                0x008001af        0x1 ./HAL/SevSeg/SevSeg_config.o
-                0x008001af                ModuleValuePins
+                0x008001ab        0x1 ./HAL/SevSeg/SevSeg_config.o
+                0x008001ab                ModuleValuePins
  .data.ModuleControlPins
-                0x008001b0        0x1 ./HAL/SevSeg/SevSeg_config.o
-                0x008001b0                ModuleControlPins
+                0x008001ac        0x1 ./HAL/SevSeg/SevSeg_config.o
+                0x008001ac                ModuleControlPins
  .data.SSegModule
-                0x008001b1       0x1c ./HAL/SevSeg/SevSeg_config.o
-                0x008001b1                SSegModule
+                0x008001ad       0x1c ./HAL/SevSeg/SevSeg_config.o
+                0x008001ad                SSegModule
  .data.LD_u8LD_MaxNum
-                0x008001cd        0x1 ./HAL/LD/LD_config.o
-                0x008001cd                LD_u8LD_MaxNum
- .data.LD_Mode  0x008001ce        0x1 ./HAL/LD/LD_config.o
-                0x008001ce                LD_Mode
- .data.LD_u8On  0x008001cf        0x1 ./HAL/LD/LD_config.o
-                0x008001cf                LD_u8On
- .data.LD       0x008001d0        0x6 ./HAL/LD/LD_config.o
-                0x008001d0                LD
+                0x008001c9        0x1 ./HAL/LD/LD_config.o
+                0x008001c9                LD_u8LD_MaxNum
+ .data.LD       0x008001ca        0x6 ./HAL/LD/LD_config.o
+                0x008001ca                LD
  .data.Kpad_u8MaxSideKeys
-                0x008001d6        0x1 ./HAL/Keypad/Keypad_config.o
-                0x008001d6                Kpad_u8MaxSideKeys
+                0x008001d0        0x1 ./HAL/Keypad/Keypad_config.o
+                0x008001d0                Kpad_u8MaxSideKeys
  .data.Kpad_u8RowNum
-                0x008001d7        0x1 ./HAL/Keypad/Keypad_config.o
-                0x008001d7                Kpad_u8RowNum
+                0x008001d1        0x1 ./HAL/Keypad/Keypad_config.o
+                0x008001d1                Kpad_u8RowNum
  .data.Kpad_u8ColNum
-                0x008001d8        0x1 ./HAL/Keypad/Keypad_config.o
-                0x008001d8                Kpad_u8ColNum
+                0x008001d2        0x1 ./HAL/Keypad/Keypad_config.o
+                0x008001d2                Kpad_u8ColNum
  .data.Kpad_u8KeyValues
-                0x008001d9       0x10 ./HAL/Keypad/Keypad_config.o
-                0x008001d9                Kpad_u8KeyValues
+                0x008001d3       0x10 ./HAL/Keypad/Keypad_config.o
+                0x008001d3                Kpad_u8KeyValues
  .data.KeyPadCols
-                0x008001e9        0x8 ./HAL/Keypad/Keypad_config.o
-                0x008001e9                KeyPadCols
+                0x008001e3        0x8 ./HAL/Keypad/Keypad_config.o
+                0x008001e3                KeyPadCols
  .data.KeyPadRows
-                0x008001f1        0xc ./HAL/Keypad/Keypad_config.o
-                0x008001f1                KeyPadRows
+                0x008001eb        0xc ./HAL/Keypad/Keypad_config.o
+                0x008001eb                KeyPadRows
  .data.CompressorStatus
-                0x008001fd        0x1 ./App/HVAC_CONTROL.o
-                0x008001fd                CompressorStatus
+                0x008001f7        0x1 ./App/HVAC_CONTROL.o
+                0x008001f7                CompressorStatus
  .data.TemperatureStatus
-                0x008001fe        0x1 ./App/HVAC_CONTROL.o
-                0x008001fe                TemperatureStatus
+                0x008001f8        0x1 ./App/HVAC_CONTROL.o
+                0x008001f8                TemperatureStatus
  .data.Global_boolPower
-                0x008001ff        0x1 ./App/HVAC_CONTROL.o
-                0x008001ff                Global_boolPower
+                0x008001f9        0x1 ./App/HVAC_CONTROL.o
+                0x008001f9                Global_boolPower
  .data.Global_boolRead
-                0x00800200        0x1 ./App/HVAC_CONTROL.o
-                0x00800200                Global_boolRead
+                0x008001fa        0x1 ./App/HVAC_CONTROL.o
+                0x008001fa                Global_boolRead
  .data.Global_boolSetMode
-                0x00800201        0x1 ./App/HVAC_CONTROL.o
-                0x00800201                Global_boolSetMode
+                0x008001fb        0x1 ./App/HVAC_CONTROL.o
+                0x008001fb                Global_boolSetMode
  .data.Sleep_Mode
-                0x00800202        0x1 ./App/HVAC_CONTROL.o
-                0x00800202                Sleep_Mode
+                0x008001fc        0x1 ./App/HVAC_CONTROL.o
+                0x008001fc                Sleep_Mode
  .data.Global_u8SetTemp
-                0x00800203        0x1 ./App/HVAC_CONTROL.o
-                0x00800203                Global_u8SetTemp
+                0x008001fd        0x1 ./App/HVAC_CONTROL.o
+                0x008001fd                Global_u8SetTemp
  *(.rodata)
  *(.rodata*)
  *(.gnu.linkonce.d*)
-                0x00800204                . = ALIGN (0x2)
-                0x00800204                _edata = .
-                0x00800204                PROVIDE (__data_end, .)
+                0x008001fe                . = ALIGN (0x2)
+                0x008001fe                _edata = .
+                0x008001fe                PROVIDE (__data_end, .)
 
-.bss            0x00800204        0xe
-                0x00800204                PROVIDE (__bss_start, .)
+.bss            0x008001fe        0xb
+                0x008001fe                PROVIDE (__bss_start, .)
  *(.bss)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
- .bss           0x00800204        0x0 ./MCAL/GIE/GIE_prog.o
- .bss           0x00800204        0x0 ./MCAL/EXTI/EXTI_config.o
- .bss           0x00800204        0x0 ./MCAL/EXTI/EXTI_prog.o
- .bss           0x00800204        0x0 ./MCAL/DIO/DIO_prog.o
- .bss           0x00800204        0x0 ./MCAL/ADC/ADC_porg.o
- .bss           0x00800204        0x0 ./HAL/Switch/Switch_config.o
- .bss           0x00800204        0x0 ./HAL/Switch/Switch_prog.o
- .bss           0x00800204        0x0 ./HAL/SevSeg/SevSeg_config.o
- .bss           0x00800204        0x0 ./HAL/SevSeg/SevSeg_prog.o
- .bss           0x00800204        0x0 ./HAL/LM35/LM35_prog.o
- .bss           0x00800204        0x0 ./HAL/LD/LD_config.o
- .bss           0x00800204        0x0 ./HAL/LD/LD_prog.o
- .bss           0x00800204        0x0 ./HAL/LCD/LCD_prog.o
- .bss           0x00800204        0x0 ./HAL/Keypad/Keypad_config.o
- .bss           0x00800204        0x0 ./HAL/Keypad/Keypad_prog.o
- .bss           0x00800204        0x0 ./App/HVAC_CONTROL.o
- .bss           0x00800204        0x0 ./App/bassem.o
- .bss           0x00800204        0x0 ./App/main.o
- .bss           0x00800204        0x0 ./.metadata/.plugins/org.eclipse.cdt.make.core/specs.o
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodhi4.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodhi4.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodsi4.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_fixunssfsi.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_addsub_sf.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_mul_sf.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_gt_sf.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_ge_sf.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_lt_sf.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_sf_to_si.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_thenan_sf.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_usi_to_sf.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_prologue.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_epilogue.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clzsi2.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_pack_sf.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_unpack_sf.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_fpcmp_parts_sf.o)
- .bss           0x00800204        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clz.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/../../../../avr/lib/avr5/crtm32.o
+ .bss           0x008001fe        0x0 ./MCAL/GIE/GIE_prog.o
+ .bss           0x008001fe        0x0 ./MCAL/EXTI/EXTI_config.o
+ .bss           0x008001fe        0x0 ./MCAL/EXTI/EXTI_prog.o
+ .bss           0x008001fe        0x0 ./MCAL/DIO/DIO_prog.o
+ .bss           0x008001fe        0x0 ./MCAL/ADC/ADC_porg.o
+ .bss           0x008001fe        0x0 ./HAL/Switch/Switch_config.o
+ .bss           0x008001fe        0x0 ./HAL/Switch/Switch_prog.o
+ .bss           0x008001fe        0x0 ./HAL/SevSeg/SevSeg_config.o
+ .bss           0x008001fe        0x0 ./HAL/SevSeg/SevSeg_prog.o
+ .bss           0x008001fe        0x0 ./HAL/LM35/LM35_prog.o
+ .bss           0x008001fe        0x0 ./HAL/LD/LD_config.o
+ .bss           0x008001fe        0x0 ./HAL/LD/LD_prog.o
+ .bss           0x008001fe        0x0 ./HAL/LCD/LCD_prog.o
+ .bss           0x008001fe        0x0 ./HAL/Keypad/Keypad_config.o
+ .bss           0x008001fe        0x0 ./HAL/Keypad/Keypad_prog.o
+ .bss           0x008001fe        0x0 ./App/HVAC_CONTROL.o
+ .bss           0x008001fe        0x0 ./App/bassem.o
+ .bss           0x008001fe        0x0 ./App/main.o
+ .bss           0x008001fe        0x0 ./.metadata/.plugins/org.eclipse.cdt.make.core/specs.o
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodhi4.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodhi4.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_udivmodsi4.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_divmodsi4.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_exit.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_copy_data.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clear_bss.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_fixunssfsi.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_addsub_sf.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_mul_sf.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_gt_sf.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_ge_sf.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_lt_sf.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_sf_to_si.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_thenan_sf.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_usi_to_sf.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_prologue.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_epilogue.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clzsi2.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_pack_sf.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_unpack_sf.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_fpcmp_parts_sf.o)
+ .bss           0x008001fe        0x0 d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr5\libgcc.a(_clz.o)
  *(.bss*)
  .bss.EXTI_ApFunction_AppFun
-                0x00800204        0x6 ./MCAL/EXTI/EXTI_prog.o
-                0x00800204                EXTI_ApFunction_AppFun
+                0x008001fe        0x6 ./MCAL/EXTI/EXTI_prog.o
+                0x008001fe                EXTI_ApFunction_AppFun
  .bss.ADC_pFunISRFun
-                0x0080020a        0x2 ./MCAL/ADC/ADC_porg.o
- .bss.LD_u8Off  0x0080020c        0x1 ./HAL/LD/LD_config.o
-                0x0080020c                LD_u8Off
+                0x00800204        0x2 ./MCAL/ADC/ADC_porg.o
+ .bss.Global_u16TempRead
+                0x00800206        0x2 ./App/HVAC_CONTROL.o
+                0x00800206                Global_u16TempRead
  .bss.Initial_Start
-                0x0080020d        0x1 ./App/HVAC_CONTROL.o
-                0x0080020d                Initial_Start
+                0x00800208        0x1 ./App/HVAC_CONTROL.o
+                0x00800208                Initial_Start
  *(COMMON)
- COMMON         0x0080020e        0x4 ./App/HVAC_CONTROL.o
-                0x0080020e                Global_u16TempRead
-                0x00800210                Global_u16PrevRead
-                0x00800212                PROVIDE (__bss_end, .)
-                0x0000493c                __data_load_start = LOADADDR (.data)
-                0x00004ae0                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x00800209                PROVIDE (__bss_end, .)
+                0x00004a56                __data_load_start = LOADADDR (.data)
+                0x00004bf4                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x00800212        0x0
-                0x00800212                PROVIDE (__noinit_start, .)
+.noinit         0x00800209        0x0
+                0x00800209                PROVIDE (__noinit_start, .)
  *(.noinit*)
-                0x00800212                PROVIDE (__noinit_end, .)
-                0x00800212                _end = .
-                0x00800212                PROVIDE (__heap_start, .)
+                0x00800209                PROVIDE (__noinit_end, .)
+                0x00800209                _end = .
+                0x00800209                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
  *(.eeprom*)
@@ -764,7 +761,7 @@ LOAD d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr
 .signature
  *(.signature*)
 
-.stab           0x00000000     0x6000
+.stab           0x00000000     0x6258
  *(.stab)
  .stab          0x00000000      0x27c ./MCAL/GIE/GIE_prog.o
  .stab          0x0000027c      0x1f8 ./MCAL/EXTI/EXTI_config.o
@@ -773,40 +770,40 @@ LOAD d:/amit_course/masters/drive/sdk_win_64/winavr/bin/../lib/gcc/avr/4.3.3/avr
                                 0x8c4 (size before relaxing)
  .stab          0x00000c48      0x684 ./MCAL/DIO/DIO_prog.o
                                 0x690 (size before relaxing)
- .stab          0x000012cc      0x87c ./MCAL/ADC/ADC_porg.o
-                                0x888 (size before relaxing)
- .stab          0x00001b48      0x21c ./HAL/Switch/Switch_config.o
+ .stab          0x000012cc      0xa98 ./MCAL/ADC/ADC_porg.o
+                                0xaa4 (size before relaxing)
+ .stab          0x00001d64      0x210 ./HAL/Switch/Switch_config.o
+                                0x21c (size before relaxing)
+ .stab          0x00001f74      0x4f8 ./HAL/Switch/Switch_prog.o
+                                0x51c (size before relaxing)
+ .stab          0x0000246c      0x21c ./HAL/SevSeg/SevSeg_config.o
                                 0x228 (size before relaxing)
- .stab          0x00001d64      0x33c ./HAL/Switch/Switch_prog.o
-                                0x360 (size before relaxing)
- .stab          0x000020a0      0x21c ./HAL/SevSeg/SevSeg_config.o
-                                0x228 (size before relaxing)
- .stab          0x000022bc      0x804 ./HAL/SevSeg/SevSeg_prog.o
+ .stab          0x00002688      0x678 ./HAL/SevSeg/SevSeg_prog.o
                                 0x834 (size before relaxing)
- .stab          0x00002ac0      0x2a0 ./HAL/LM35/LM35_prog.o
+ .stab          0x00002d00      0x2a0 ./HAL/LM35/LM35_prog.o
                                 0x2ac (size before relaxing)
- .stab          0x00002d60      0x234 ./HAL/LD/LD_config.o
-                                0x240 (size before relaxing)
- .stab          0x00002f94      0x384 ./HAL/LD/LD_prog.o
-                                0x3a8 (size before relaxing)
- .stab          0x00003318     0x12b4 ./HAL/LCD/LCD_prog.o
+ .stab          0x00002fa0      0x210 ./HAL/LD/LD_config.o
+                                0x21c (size before relaxing)
+ .stab          0x000031b0      0x360 ./HAL/LD/LD_prog.o
+                                0x384 (size before relaxing)
+ .stab          0x00003510     0x12b4 ./HAL/LCD/LCD_prog.o
                                0x144c (size before relaxing)
- .stab          0x000045cc      0x24c ./HAL/Keypad/Keypad_config.o
+ .stab          0x000047c4      0x24c ./HAL/Keypad/Keypad_config.o
                                 0x258 (size before relaxing)
- .stab          0x00004818      0x7a4 ./HAL/Keypad/Keypad_prog.o
+ .stab          0x00004a10      0x7a4 ./HAL/Keypad/Keypad_prog.o
                                 0x954 (size before relaxing)
- .stab          0x00004fbc      0xdbc ./App/HVAC_CONTROL.o
-                                0xf54 (size before relaxing)
- .stab          0x00005d78       0xd8 ./App/bassem.o
+ .stab          0x000051b4      0xe1c ./App/HVAC_CONTROL.o
+                                0xfb4 (size before relaxing)
+ .stab          0x00005fd0       0xd8 ./App/bassem.o
                                  0xe4 (size before relaxing)
- .stab          0x00005e50       0xd8 ./App/main.o
+ .stab          0x000060a8       0xd8 ./App/main.o
                                  0xe4 (size before relaxing)
- .stab          0x00005f28       0xd8 ./.metadata/.plugins/org.eclipse.cdt.make.core/specs.o
+ .stab          0x00006180       0xd8 ./.metadata/.plugins/org.eclipse.cdt.make.core/specs.o
                                  0xe4 (size before relaxing)
 
-.stabstr        0x00000000     0x289d
+.stabstr        0x00000000     0x299f
  *(.stabstr)
- .stabstr       0x00000000     0x289d ./MCAL/GIE/GIE_prog.o
+ .stabstr       0x00000000     0x299f ./MCAL/GIE/GIE_prog.o
 
 .stab.excl
  *(.stab.excl)

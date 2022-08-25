@@ -74,8 +74,8 @@
 /****************************/
 /*	 Interrupt Modes		*/
 /****************************/
-#define INTERRUPT		165
-#define POLLING			166
+#define ADC_INTERRUPT		165
+#define ADC_POLLING			166
 
 /****************************/
 /*	 Auto Trigger Source	*/
