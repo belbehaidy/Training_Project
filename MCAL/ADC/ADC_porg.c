@@ -2,7 +2,7 @@
  * ADC_porg.c
  *
  *  Created on: Aug 23, 2022
- *      Author: basse
+ *      Author: Bassem El-Behaidy
  */
 
 #include "../../Libraries/stdTypes.h"

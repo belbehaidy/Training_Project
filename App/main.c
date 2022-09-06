@@ -2,8 +2,166 @@
  * main.c
  *
  *  Created on: Aug 5, 2022
- *      Author: Ahmed El-Gaafrawy
+ *      Author: Bassem El-behaidy
  */
+
+#include "../Libraries/stdTypes.h"
+#include "../Libraries/errorState.h"
+
+#include "../MCAL/DIO/DIO_int.h"
+//#include "../HAL/LCD/LCD_int.h"
+
+//#include "../HAL/Keypad/Keypad_int.h"
+//#include "../HAL/Switch/Switch_int.h"
+
+#include "../MCAL/TIMER/TIMER_int.h"
+#include "../MCAL/EXTI/EXTI_int.h"
+#include "../MCAL/GIE/GIE_int.h"
+//#include "../MCAL/ADC/ADC_int.h"
+
+
+void TOIE0_ISR(void*);
+void EXT_INT0_ISR(void);
+
+u8 OnCounts = 0 , CycleCounts = 0 , OVF_counts=0 , CycleOVFs = 0 ,OnOVFs = 0 , Duty , state = 0 ;
+u16 freq;
+u32 Counts = 0 ;
+
+void *pNULL = NULL;
+
+int
+main(void)
+{
+
+
+
+	DIO_enuInit();
+	EXTI_enuInit();
+	Timer_enuInit();
+
+	Timer_enuCallBack( TOIE0 , TOIE0_ISR , pNULL);
+	Timer_enuInterruptEnable( TOIE0 );
+
+	EXTI_enuCallBack( INT0 , EXT_INT0_ISR );
+	EXTI_enuSetSenseLevel( INT0 , RISING_EDGE);
+	EXTI_enuEnableInterrupt( INT0 );
+
+	GIE_enuEnable();
+
+
+	while( 1 )
+	{
+		if( state == 1 )
+		{
+			Timer_enuReset( TIMER0 );
+			OVF_counts = 0 ;
+			EXTI_enuSetSenseLevel( INT0 , FALLING_EDGE);
+		}
+		else if( state == 2)
+		{
+			Timer_enuReadCounterValue( TIMER0 , &OnCounts) ;
+			OnOVFs = OVF_counts ;
+			EXTI_enuSetSenseLevel( INT0 , RISING_EDGE);
+
+		}
+		else if( state ==3)
+		{
+			Timer_enuReadCounterValue( TIMER0 , &CycleCounts) ;
+			CycleOVFs = OVF_counts ;
+			Timer_enuReset( TIMER0 ) ;
+			EXTI_enuDisableInterrupt( INT0 );
+			Timer_enuInterruptDisable( TOIE0 );
+			u32 Local_u32Timer0_Clk ;
+			Duty = ( OnCounts += (OnOVFs * 256) )/ ( CycleCounts += (CycleOVFs * 256) );
+			if ( Timer_enuGetClock( TIMER0 , &Local_u32Timer0_Clk ) == ES_OK )
+			freq = 1/( Local_u32Timer0_Clk * CycleCounts);
+		}
+	}
+
+}
+
+void EXT_INT0_ISR(void)
+{
+	state++ ;
+}
+
+void TOIE0_ISR(void* Copy_pvidVar)
+{
+	OVF_counts++;
+}
+
+
+
+
+/*
+#include <util/delay.h>
+
+
+#define TCCR0 		*((volatile u8*)0x53)
+#define TCNT0 		*((volatile u8*)0x52)
+#define OCR0 		*((volatile u8*)0x5C)
+#define TIMSK 		*((volatile u8*)0x59)
+
+u32 ovf , count;
+u8 preload;
+
+int
+main(void)
+{
+
+	DIO_enuSetPinDirection(DIO_u8GROUP_C , DIO_u8PIN2 , DIO_u8OUTPUT);
+	DIO_enuSetPinDirection(DIO_u8GROUP_C , DIO_u8PIN4 , DIO_u8OUTPUT);
+	DIO_enuSetPinDirection(DIO_u8GROUP_C , DIO_u8PIN6 , DIO_u8OUTPUT);
+
+	//ovf , 1024 pres , disconnected
+	TCCR0 = 0x4D;
+	OCR0 = 255;
+	u32 counts = (500llu * F_CPU)/(1024 * 1000UL);
+	ovf = (counts+255)/256;
+	//ovf = (counts+509)/510;
+	count = ovf;
+	preload = 256 - (counts % 256);
+	//preload = 255 - (counts % 255);
+	TCNT0 =preload;
+	TIMSK |= (1<<0);
+	TIMSK |= (1<<1);
+	GIE_enuEnable();
+	while (1);
+}
+
+
+void __vector_10(void)__attribute__((signal));
+void __vector_10(void)
+{
+	DIO_enuTogglePinValue(DIO_u8GROUP_C , DIO_u8PIN6);
+	DIO_enuTogglePinValue(DIO_u8GROUP_C , DIO_u8PIN6);
+}
+
+void __vector_11(void)__attribute__((signal));
+void __vector_11(void)
+{
+	DIO_enuTogglePinValue(DIO_u8GROUP_C , DIO_u8PIN4);
+	count --;
+	DIO_enuTogglePinValue(DIO_u8GROUP_C , DIO_u8PIN4);
+	if ( ! count)
+	{
+		TCNT0 =preload;
+
+		DIO_enuTogglePinValue(DIO_u8GROUP_C , DIO_u8PIN2);
+
+		count = ovf;
+	}
+}
+
+
+*/
+
+
+
+
+
+
+
 /*
 #include <util/delay.h>
 #include "../Libraries/stdTypes.h"
@@ -294,7 +452,7 @@ ES_t CheckCounterStatus(void)
 
 	return Local_enuErrorState;
 }
-
+*/
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*

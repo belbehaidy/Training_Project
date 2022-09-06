@@ -23,6 +23,7 @@ SUBDIRS := \
 .metadata/.plugins/org.eclipse.cdt.make.core \
 App \
 HAL/Keypad \
+HAL/L293D \
 HAL/LCD \
 HAL/LD \
 HAL/LM35 \
@@ -32,4 +33,6 @@ MCAL/ADC \
 MCAL/DIO \
 MCAL/EXTI \
 MCAL/GIE \
+MCAL/PWM \
+MCAL/TIMER \
 
