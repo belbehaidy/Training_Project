@@ -12,6 +12,6 @@
 u8 Motors_u8MaxNum = MOTORS_MAX_NUM ;
 
 Motor_t Motors[MOTORS_MAX_NUM] =	{
-										{ MOTOR1 , { H_EN1_GRP , H_EN1_PIN } , { H_A1_GRP , H_A1_GRP } , { H_B1_GRP , H_B1_GRP } },
-										{ MOTOR2 , { H_EN2_GRP , H_EN2_PIN } , { H_A2_GRP , H_A2_GRP } , { H_B2_GRP , H_B2_GRP } }
+										{ MOTOR1 , MOTOR1_PWM , { H_EN1_GRP , H_EN1_PIN } , { H_A1_GRP , H_A1_GRP } , { H_B1_GRP , H_B1_GRP } },
+										{ MOTOR2 , MOTOR2_PWM , { H_EN2_GRP , H_EN2_PIN } , { H_A2_GRP , H_A2_GRP } , { H_B2_GRP , H_B2_GRP } }
 									};

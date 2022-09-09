@@ -97,21 +97,27 @@ ES_t Timer_enuSetClkPrescaler( u8 Copy_u8TimerNum , u8 Copy_u8PrescalerValue );
 
 ES_t Timer_enuGetClkSelect( u8 Copy_u8TimerNum , u16 *Copy_pu8TimerClkSelect );
 
-ES_t Timer_enuSetCOM_Mode( u8 Copy_u8TimerNum , u8 Copy_u8COM_Mode );
+ES_t Timer_enuSetOCn_Mode( u8 Copy_u8TimerNum , u8 Copy_u8COM_Mode );/////////////////////////////
 
-ES_t Timer_enuGetCOM_Mode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerCOM_Mode);
+ES_t Timer_enuGetOCn_Mode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerCOM_Mode);//////////////////////
 
-ES_t Timer_enuSetWGM_Mode( u8 Copy_u8TimerNum , u8 Copy_u8WGM_Mode );
+ES_t Timer_enuSetTimer_Mode( u8 Copy_u8TimerNum , u8 Copy_u8WGM_Mode );///////////////////////
 
-ES_t Timer_enuGetWGM_Mode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerWGM_Mode);
+ES_t Timer_enuGetTimer_Mode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerWGM_Mode);//////////////////////
 
 ES_t Timer_enuReset( u8 Copy_u8TimerNum );
+
+ES_t Timer_enuPreLoad( u8 Copy_u8TimerNum , u16 Copy_u16PreLoad); ////////////////////////////////////////
 
 ES_t Timer_enuReadCounterValue( u8 Copy_u8TimerNum , void *Copy_pCounterValue );
 
 ES_t Timer_enuSetOCRnValue( u8 Copy_u8TimerNum , u16 Copy_u16OCRnValue );
 
 ES_t Timer_enuReadOCRnValue( u8 Copy_u8TimerNum , void *Copy_pCounterValue );
+
+ES_t Timer_enuSetICR1Value( u16 Copy_u16ICR1Value );
+
+ES_t Timer_enuReadICR1Value( u16 *Copy_pu16ICR1Value );
 
 ES_t Timer_enuInterruptEnable( u8 Copy_u8TimerIntName);
 

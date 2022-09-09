@@ -468,29 +468,25 @@ ES_t Timer_enuReset( u8 Copy_u8TimerNum )
 {
 	ES_t Local_enuErrorState = ES_NOK;
 
-	u8 Local_u8CopyTIMSK = TIMSK ;									// Saving a Copy of Timer Interrupt Mask Register
+	u8 Local_u8Temp = SREG ;									// Saving a Copy of AVR Status Register
+	asm( "CLI" );												// Disable All Interrupts while writing to Counter Register
 
 	if( Copy_u8TimerNum == TIMER0 )
 	{
-		TIMSK &= ~( TC0_INT_EN_MASK ) ;								// Disable Timer0 Interrupts
 		TCNT0 = 0x00 ;
-		TIMSK = Local_u8CopyTIMSK ;									// Re-setting Timer Interrupt Mask Register to its Status
 	}
 	else if( Copy_u8TimerNum == TIMER1 || Copy_u8TimerNum == TIMER1A || Copy_u8TimerNum == TIMER1B )
 	{
-		u8 Local_u8Temp = SREG ;									// Saving a Copy of AVR Status Register
-		asm( "CLI" );												// Disable All Interrupts while writing to 16-bit Counter Register TCNT1
 		TCNT1H = 0x00 ;
 		TCNT1L = 0x00 ;
-		SREG = Local_u8Temp;										// Re-setting AVR Status Register to its Status
 	}
 	else if( Copy_u8TimerNum == TIMER2 )
 	{
-		TIMSK &= ~( TC2_INT_EN_MASK ) ;								// Disable Timer2 Interrupts
 		TCNT2 = 0x00 ;
-		TIMSK = Local_u8CopyTIMSK ;									// Re-setting Timer Interrupt Mask Register to its Status
 	}
 	else Local_enuErrorState = ES_OUT_RANGE;
+
+	SREG = Local_u8Temp;										// Re-setting AVR Status Register to its Status
 
 	return ( (Local_enuErrorState == ES_NOK)? ES_OK : Local_enuErrorState ) ;
 }
@@ -585,6 +581,28 @@ ES_t Timer_enuReadOCRnValue( u8 Copy_u8TimerNum , void *Copy_pCounterValue )
 
 		return ( (Local_enuErrorState == ES_NOK)? ES_OK : Local_enuErrorState ) ;
 
+}
+
+ES_t Timer_enuSetICR1Value( u16 Copy_u16ICR1Value )
+{
+	u8 Local_u8Temp = SREG ;
+	asm( "CLI" );
+	ICR1H = Copy_u16ICR1Value >> 8 ;
+	ICR1L = Copy_u16ICR1Value ;
+	SREG = Local_u8Temp;
+
+	return ES_OK;
+}
+
+ES_t Timer_enuReadICR1Value( u16 *Copy_pu16ICR1Value )
+{
+	u8 Local_u8Temp = SREG ;
+	asm( "CLI" );
+	*Copy_pu16ICR1Value  = ICR1L;
+	*Copy_pu16ICR1Value |= (u16)( ICR1H << 8 ) ;
+	SREG = Local_u8Temp;
+
+	return ES_OK;
 }
 
 

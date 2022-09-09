@@ -61,12 +61,25 @@
 /****************************************/
 /*	 Waveform Generation Mode Options	*/
 /****************************************/
-#define WGM_NORMAL_MODE		30
-#define WGM_CTC_MODE		32
-#define WGM_CTC_IRC1_MODE	33
+#define WGM_MODE_00			100		/* TIMERS ONLY	*/
+#define WGM_PC_8_bit		101
+#define WGM_PC_9_bit		102
+#define WGM_PC_10_bit		103
+#define WGM_MODE_04			104		/* TIMERS ONLY	*/
+#define WGM_FAST_8_bit		105
+#define WGM_FAST_9_bit		106
+#define WGM_FAST_10_bit		107
+#define WGM_PFC_ICR1		108
+#define WGM_PFC_OCR1A		109
+#define WGM_PC_ICR1			110
+#define WGM_PC_OCR1A		111
+#define WGM_MODE_12			112		/* TIMERS ONLY	*/
+#define WGM_MODE_13			113		/*	Reserved	*/
+#define WGM_FAST_ICR1		114
+#define WGM_FAST_OCR1A		115
 
 /****************************************/
-/*		 Timer Interrupt Options		*/
+/*		 Timer Interrupt Modes		*/
 /****************************************/
 #define TC_POLLING			40
 #define TC_OVERFLOW_INT		41
@@ -89,36 +102,46 @@
 
 
 
-void PWM_enuInit( void );
+ES_t PWM_enuInit( void );
 
-ES_t Timer_enuGetClock( u8 Copy_u8TimerNum , u32 *Copy_pu32TimerClk);
+ES_t PWM_enuGetClock( u8 Copy_u8TimerNum , u32 *Copy_pu32TimerClk);
 
-ES_t Timer_enuSetClkPrescaler( u8 Copy_u8TimerNum , u8 Copy_u8PrescalerValue );
+ES_t PWM_enuSetClkPrescaler( u8 Copy_u8TimerNum , u8 Copy_u8PrescalerValue );
 
-ES_t Timer_enuGetClkSelect( u8 Copy_u8TimerNum , u16 *Copy_pu8TimerClkSelect );
+ES_t PWM_enuGetClkSelect( u8 Copy_u8TimerNum , u16 *Copy_pu8TimerClkSelect );
 
-ES_t Timer_enuSetCOM_Mode( u8 Copy_u8TimerNum , u8 Copy_u8COM_Mode );
+ES_t PWM_enuSetCOM_Mode( u8 Copy_u8TimerNum , u8 Copy_u8COM_Mode );
 
-ES_t Timer_enuGetCOM_Mode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerCOM_Mode);
+ES_t PWM_enuGetCOM_Mode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerCOM_Mode);
 
-ES_t Timer_enuSetWGM_Mode( u8 Copy_u8TimerNum , u8 Copy_u8WGM_Mode );
+ES_t PWM_enuSetWGM_Mode( u8 Copy_u8TimerNum , u8 Copy_u8WGM_Mode );
 
-ES_t Timer_enuGetWGM_Mode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerWGM_Mode);
+ES_t PWM_enuGetWGM_Mode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerWGM_Mode);
 
-ES_t Timer_enuReset( u8 Copy_u8TimerNum );
+ES_t PWM_enuSetInterruptMode( u8 Copy_u8TimerNum , u8 Copy_u8TimerInterruptMode );////////////////////////////////////
 
-ES_t Timer_enuReadCounterValue( u8 Copy_u8TimerNum , void *Copy_pCounterValue );
+ES_t PWM_enuGetInterruptMode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerInterruptMode );//////////////////////////////////////
 
-ES_t Timer_enuSetOCRnValue( u8 Copy_u8TimerNum , u16 Copy_u16OCRnValue );
+ES_t PWM_enuSetDutyCycle( u8 Copy_u8TimerNum , u8 Copy_u8DutyCycle );////////////////////////////////////////////////////////
 
-ES_t Timer_enuReadOCRnValue( u8 Copy_u8TimerNum , void *Copy_pCounterValue );
+//ES_t Timer_enuReset( u8 Copy_u8TimerNum );
 
-ES_t Timer_enuInterruptEnable( u8 Copy_u8TimerIntName);
+//ES_t Timer_enuReadCounterValue( u8 Copy_u8TimerNum , void *Copy_pCounterValue );
 
-ES_t Timer_enuInterruptDisable( u8 Copy_u8TimerIntName);
+ES_t PWM_enuSetOCRnValue( u8 Copy_u8TimerNum , u16 Copy_u16OCRnValue );
 
-bool Timer_IsInterruptEnabled( u8 Copy_u8TimerIntName );
+ES_t PWM_enuReadOCRnValue( u8 Copy_u8TimerNum , void *Copy_pCounterValue );
 
-ES_t Timer_enuCallBack( u8 Copy_u8TimerIntName , void (*Copy_pAppFun)(void*) , void *Copy_pAppVar);
+ES_t PWM_enuSetICR1Value( u16 Copy_u16ICR1Value );
+
+//ES_t Timer_enuReadICR1Value( u16 *Copy_pu16ICR1Value );
+
+ES_t PWM_enuInterruptEnable( u8 Copy_u8TimerIntName);
+
+ES_t PWM_enuInterruptDisable( u8 Copy_u8TimerIntName);
+
+bool PWM_IsInterruptEnabled( u8 Copy_u8TimerIntName );
+
+ES_t PWM_enuCallBack( u8 Copy_u8TimerIntName , void (*Copy_pAppFun)(void*) , void *Copy_pAppVar);
 
 #endif /* MCAL_PWM_PWM_INT_H_ */

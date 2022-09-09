@@ -16,7 +16,7 @@ extern u16 Timer1Max ;
 extern Timer_t	Timers[];
 
 static u8 Global_u8OCR0_Value = 0x00  , Global_u8OCR2_Value = 0x00 ;
-static u16 Global_u8OCR1A_Value = 0x0000 , Global_u8OCR1B_Value = 0x0000 ;
+static u16 Global_u16OCR1A_Value = 0x0000 , Global_u16OCR1B_Value = 0x0000 , Global_u16ICR1_Value = 0x0000;
 static u32 Global_u32Timer0_Clk , Global_u32Timer1_Clk , Global_u32Timer2_Clk ;
 
 Int_Pointers_t Global_AstrPointers[TIMERS_INTERRUPTS] =	{
@@ -31,7 +31,7 @@ Int_Pointers_t Global_AstrPointers[TIMERS_INTERRUPTS] =	{
 														};
 
 
-ES_t Timer_enuInit( void )
+ES_t PWM_enuInit( void )
 {
 	ES_t Local_enuErrorState = ES_NOK ;
 
@@ -44,23 +44,53 @@ ES_t Timer_enuInit( void )
 			TIMSK &= ~( TC0_INT_EN_MASK ) ;			// Disable All Interrupts before setting all conditions
 			TCCR0 = 0x00 ;							// Masks all bits in TCCR0
 			OCR0  = 0x00 ;							// Clears Output Compare Register
-			/*	Set Clock Selection	*/
-			Global_u32Timer0_Clk = Timer_u32TimerClock( TIMER0 , Timers[Local_u8Iter].ClkSelect ,&Local_u8ClkSelect);
+
+			/****************************************/
+			/*			Set Clock Selection			*/
+			/****************************************/
+			Global_u32Timer0_Clk = PWM_u32TimerClock( TIMER0 , Timers[Local_u8Iter].ClkSelect ,&Local_u8ClkSelect);
 			TCCR0 |= ( Local_u8ClkSelect  << CLK0_SEL_BITS );
-			/*	Set Compare Output Mode	*/
-			TCCR0 |= ( ( Timers[Local_u8Iter].CompOutMode - COMP_NORMAL ) << COMP0_MAT_OUT_MODE_BITS );
-			/*	Set Waveform Generation Mode	*/
-			if( Timers[Local_u8Iter].WaveGenMode == WGM_NORMAL_MODE	||
-				Timers[Local_u8Iter].WaveGenMode == WGM_CTC_MODE	)
+
+			/****************************************/
+			/*		Set Compare Output Mode			*/
+			/****************************************/
+			if( Timers[Local_u8Iter].CompOutMode == COMP_NON_INVERTED ||
+				Timers[Local_u8Iter].CompOutMode == COMP_INVERTED		)
 			{
-				TCCR0 |= ( ( ( Timers[Local_u8Iter].WaveGenMode - WGM_NORMAL_MODE ) >> BIT0_MASK ) << WGM01_BIT );
+				TCCR0 |= ( ( Timers[Local_u8Iter].CompOutMode - COMP_NORMAL ) << COMP0_MAT_OUT_MODE_BITS );
 			}
 			else
 			{
 				Local_enuErrorState = ES_OUT_RANGE ;
-				#warning "Timer_Init(): Non Supported Waveform Gen mode for Timer0. Timer0 WGM is set to WGM_NORMAL_MODE"
+				#warning "PWM_Init(): Non Supported Compare Output mode for Timer0. Timer0 COM mode is set to COMP_NORMAL"
 			}
-			/*	Set Interrupt Mode	*/
+
+			/****************************************/
+			/*		Set Waveform Generation Mode	*/
+			/****************************************/
+			if( Timers[Local_u8Iter].WaveGenMode == WGM_PC_8_bit		||
+				Timers[Local_u8Iter].WaveGenMode == WGM_FAST_8_bit	)
+			{
+				u8 Local_u8WGM;
+				switch( Timers[Local_u8Iter].WaveGenMode )
+				{
+					case WGM_PC_8_bit		:	Local_u8WGM = WGM_MODE_01;
+												break;
+					case WGM_FAST_8_bit		:	Local_u8WGM = WGM_MODE_03;
+												break;
+				}
+				TCCR0 |= ( BIT0_MASK << WGM00_BIT );
+				TCCR0 |= ( ( Local_u8WGM >> BIT0_MASK ) << WGM01_BIT );
+			}
+			else
+			{
+				Local_enuErrorState = ES_OUT_RANGE ;
+				#warning "PWM_Init(): Non Supported Waveform Gen mode for Timer0. Timer0 WGM is set to WGM_NORMAL_MODE"
+			}
+
+			/****************************************/
+			/*			Set Interrupt Mode			*/
+			/****************************************/
 			switch( Timers[Local_u8Iter].InterruptMode )
 			{
 				case TC_OVERFLOW_INT	:	TIMSK |= ( BIT0_MASK << TOIE0_BIT );	/*	Enable TOIE0 Interrupt */
@@ -69,7 +99,7 @@ ES_t Timer_enuInit( void )
 											break;
 
 				default :	Local_enuErrorState = ES_OUT_RANGE ;
-							#warning " Timer_Init(): Non Supported Interrupt mode for Timer0. Timer0 Interrupts are Disabled"
+							#warning " PWM_Init(): Non Supported Interrupt mode for Timer0. Timer0 Interrupts are Disabled"
 							/*Timer Interrupts are already disabled at beginning of setting value, no extra action is needed*/
 			}
 		}
@@ -89,26 +119,22 @@ ES_t Timer_enuInit( void )
 				OCR1BL = 0x00 ;								// Clears 1B LOW-byte Output Compare Register
 				SREG = Local_u8CopySREG ;
 
-				/*	Set Clock Selection	*/
-				Global_u32Timer1_Clk = Timer_u32TimerClock( TIMER1 , Timers[Local_u8Iter].ClkSelect ,&Local_u8ClkSelect);
+				/****************************************/
+				/*			Set Clock Selection			*/
+				/****************************************/
+				Global_u32Timer1_Clk = PWM_u32TimerClock( TIMER1 , Timers[Local_u8Iter].ClkSelect ,&Local_u8ClkSelect);
 				TCCR1B |= ( Local_u8ClkSelect << CLK1_SEL_BITS );
 
-				/*	Set Waveform Generation Mode	*/
-				if( Timers[Local_u8Iter].WaveGenMode == WGM_NORMAL_MODE ||
-					Timers[Local_u8Iter].WaveGenMode == WGM_CTC_MODE 	||
-					Timers[Local_u8Iter].WaveGenMode == WGM_CTC_IRC1_MODE )
+				/****************************************/
+				/*		Set Waveform Generation Mode	*/
+				/****************************************/
+				if( Timers[Local_u8Iter].WaveGenMode > WGM_MODE_00	&& Timers[Local_u8Iter].WaveGenMode <= WGM_FAST_OCR1A	&&
+					Timers[Local_u8Iter].WaveGenMode != WGM_MODE_04	&& Timers[Local_u8Iter].WaveGenMode != WGM_MODE_12		&&
+					Timers[Local_u8Iter].WaveGenMode != WGM_MODE_13	)
 				{
-					u8 Local_u8WGM;
-					switch( Timers[Local_u8Iter].WaveGenMode )
-					{
-						case WGM_NORMAL_MODE	:	Local_u8WGM = WGM_MODE_00;
-													break;
-						case WGM_CTC_MODE		:	Local_u8WGM = WGM_MODE_04;
-													break;
-						case WGM_CTC_IRC1_MODE	:	Local_u8WGM = WGM_MODE_12;
-													break;
-					}
-					TCCR1B |= ( Local_u8WGM << WGM1B_SEL_BITS );
+					u8 Local_u8WGM = Timers[Local_u8Iter].WaveGenMode - WGM_MODE_00 ;
+					TCCR1A |= ( ( Local_u8WGM & TWO_BITS_MASK ) << WGM1A_SEL_BITS );
+					TCCR1B |= ( ( ( Local_u8WGM >> BIT1_MASK) & TWO_BITS_MASK ) << WGM1B_SEL_BITS );
 				}
 				else
 				{
@@ -116,15 +142,36 @@ ES_t Timer_enuInit( void )
 					#warning "Timer_Init(): Non Supported Waveform Gen mode for Timer1. Timer1 WGM is set to WGM_NORMAL_MODE"
 				}
 			}
-			if( Timers[Local_u8Iter].TimerNum == TIMER1A )
-			{				/*	Set 1A Compare Output Mode	*/
-				TCCR1A |= ( ( Timers[Local_u8Iter].CompOutMode - COMP_NORMAL ) << COM1A_SEL_BITS );
+			/****************************************/
+			/*		Set Compare Output Mode			*/
+			/****************************************/
+			if( Timers[Local_u8Iter].CompOutMode == COMP_NON_INVERTED ||
+				Timers[Local_u8Iter].CompOutMode == COMP_INVERTED		)
+			{
+				if( Timers[Local_u8Iter].TimerNum == TIMER1A )
+				{
+					/****************************************/
+					/*		Set 1A Compare Output Mode		*/
+					/****************************************/
+					TCCR1A |= ( ( Timers[Local_u8Iter].CompOutMode - COMP_NORMAL ) << COM1A_SEL_BITS );
+				}
+				else
+				{
+					/****************************************/
+					/*		Set 1B Compare Output Mode		*/
+					/****************************************/
+					TCCR1A |= ( ( Timers[Local_u8Iter].CompOutMode - COMP_NORMAL ) << COM1B_SEL_BITS );
+				}
 			}
 			else
-			{				/*	Set 1B Compare Output Mode	*/
-				TCCR1A |= ( ( Timers[Local_u8Iter].CompOutMode - COMP_NORMAL ) << COM1B_SEL_BITS );
+			{
+				Local_enuErrorState = ES_OUT_RANGE ;
+				#warning "PWM_Init(): Non Supported Compare Output mode for Timer1. Timer1 COM mode is set to COMP_NORMAL"
 			}
 
+			/****************************************/
+			/*			Set Interrupt Mode			*/
+			/****************************************/
 			switch( Timers[Local_u8Iter].InterruptMode )
 			{
 				case TC_OVERFLOW_INT	:	TIMSK |= ( BIT0_MASK << TOIE1_BIT );	/*	Enable TOIE1 Interrupt */
@@ -151,23 +198,52 @@ ES_t Timer_enuInit( void )
 			TCCR2 = 0x00 ;							// Masks all bits in TCCR2
 			OCR2  = 0x00 ;							// Clears Output Compare Register
 
-			/*	Set Clock Selection	*/
-			Global_u32Timer2_Clk = Timer_u32TimerClock( TIMER2 , Timers[Local_u8Iter].ClkSelect ,&Local_u8ClkSelect);
+			/****************************************/
+			/*			Set Clock Selection			*/
+			/****************************************/
+			Global_u32Timer2_Clk = PWM_u32TimerClock( TIMER2 , Timers[Local_u8Iter].ClkSelect ,&Local_u8ClkSelect);
 			TCCR2 |= ( Local_u8ClkSelect << CLK2_SEL_BITS );
-			/*	Set Compare Output Mode	*/
-			TCCR2 |= ( ( Timers[Local_u8Iter].CompOutMode - COMP_NORMAL ) << COMP2_MAT_OUT_MODE_BITS );
-			/*	Set Waveform Generation Mode	*/
-			if( Timers[Local_u8Iter].WaveGenMode == WGM_NORMAL_MODE ||
-				Timers[Local_u8Iter].WaveGenMode == WGM_CTC_MODE	 )
+
+			/****************************************/
+			/*		Set Compare Output Mode			*/
+			/****************************************/
+			if( Timers[Local_u8Iter].CompOutMode == COMP_NON_INVERTED ||
+				Timers[Local_u8Iter].CompOutMode == COMP_INVERTED		)
 			{
-				TCCR2 |= ( ( ( Timers[Local_u8Iter].WaveGenMode - WGM_NORMAL_MODE ) >> BIT0_MASK ) << WGM21_BIT );
+				TCCR2 |= ( ( Timers[Local_u8Iter].CompOutMode - COMP_NORMAL ) << COMP0_MAT_OUT_MODE_BITS );
 			}
 			else
 			{
 				Local_enuErrorState = ES_OUT_RANGE ;
-				#warning "Timer_Init(): Non Supported Waveform Gen mode for Timer2. Timer2 WGM is set to WGM_NORMAL_MODE"
+				#warning "PWM_Init(): Non Supported Compare Output mode for Timer2. Timer2 COM mode is set to COMP_NORMAL"
 			}
-			/*	Set Interrupt Mode	*/
+
+			/****************************************/
+			/*		Set Waveform Generation Mode	*/
+			/****************************************/
+			if( Timers[Local_u8Iter].WaveGenMode == WGM_PC_8_bit		||
+				Timers[Local_u8Iter].WaveGenMode == WGM_FAST_8_bit	)
+			{
+				u8 Local_u8WGM;
+				switch( Timers[Local_u8Iter].WaveGenMode )
+				{
+					case WGM_PC_8_bit		:	Local_u8WGM = WGM_MODE_01;
+												break;
+					case WGM_FAST_8_bit		:	Local_u8WGM = WGM_MODE_03;
+												break;
+				}
+				TCCR2 |= ( BIT0_MASK << WGM20_BIT );
+				TCCR2 |= ( ( Local_u8WGM >> BIT0_MASK ) << WGM21_BIT );
+			}
+			else
+			{
+				Local_enuErrorState = ES_OUT_RANGE ;
+				#warning "PWM_Init(): Non Supported Waveform Gen mode for Timer2. Timer2 WGM is set to WGM_NORMAL_MODE"
+			}
+
+			/****************************************/
+			/*			Set Interrupt Mode			*/
+			/****************************************/
 			switch( Timers[Local_u8Iter].InterruptMode )
 			{
 				case TC_OVERFLOW_INT	:	TIMSK |= ( BIT0_MASK << TOIE2_BIT );	/*	Enable TOIE2 Interrupt */
@@ -176,14 +252,14 @@ ES_t Timer_enuInit( void )
 											break;
 
 				default :	Local_enuErrorState = ES_OUT_RANGE ;
-							#warning " Timer_Init(): Non Supported Interrupt mode for Timer2. Timer2 Interrupts are Disabled"
+							#warning " PWM_Init(): Non Supported Interrupt mode for Timer2. Timer2 Interrupts are Disabled"
 							/*Timer Interrupts are already disabled at beginning of setting value, no extra action is needed*/
 			}
 		}
 		else
 		{
 			Local_enuErrorState = ES_OUT_RANGE ;
-			#warning " Timer_Init(): Non Supported Timer Number , Initialization is terminated."
+			#warning " PWM_Init(): Non Supported Timer Number , Initialization is terminated."
 			break;
 		}
 	}
@@ -191,7 +267,7 @@ ES_t Timer_enuInit( void )
 	return ( (Local_enuErrorState == ES_NOK)? ES_OK : Local_enuErrorState ) ;
 }
 
-static u32 Timer_u32TimerClock( u8 Copy_u8TimerNum ,u8 Copy_u8ClkSelectNum ,u8 *Copy_pu8ClkSelectPrescalar )
+static u32 PWM_u32TimerClock( u8 Copy_u8TimerNum ,u8 Copy_u8ClkSelectNum ,u8 *Copy_pu8ClkSelectPrescalar )
 {
 	u32 Copy_u32TimerClk = CPU_CLOCK;
 
@@ -258,7 +334,7 @@ static u32 Timer_u32TimerClock( u8 Copy_u8TimerNum ,u8 Copy_u8ClkSelectNum ,u8 *
 
 }
 
-ES_t Timer_enuGetClock( u8 Copy_u8TimerNum , u32 *Copy_pu32TimerClk)
+ES_t PWM_enuGetClock( u8 Copy_u8TimerNum , u32 *Copy_pu32TimerClk)
 {
 	ES_t Local_enuErrorState = ES_NOK ;
 
@@ -274,14 +350,14 @@ ES_t Timer_enuGetClock( u8 Copy_u8TimerNum , u32 *Copy_pu32TimerClk)
 }
 
 
-ES_t Timer_enuSetClkPrescaler( u8 Copy_u8TimerNum , u8 Copy_u8PrescalerValue )
+ES_t PWM_enuSetClkPrescaler( u8 Copy_u8TimerNum , u8 Copy_u8PrescalerValue )
 {
 	ES_t Local_enuErrorState = ES_NOK;
 
 	u8 Local_u8ClkSelectPrescaler = NO_CLK ;
 	u8 Local_u8CopyTIMSK = TIMSK ;									// Saving a Copy of Timer Interrupt Mask Register
 
-	u32 Local_u32TimerClk = Timer_u32TimerClock( Copy_u8TimerNum , Copy_u8PrescalerValue , &Local_u8ClkSelectPrescaler ) ;
+	u32 Local_u32TimerClk = PWM_u32TimerClock( Copy_u8TimerNum , Copy_u8PrescalerValue , &Local_u8ClkSelectPrescaler ) ;
 
 	if( Copy_u8TimerNum == TIMER0 )
 	{
@@ -315,7 +391,7 @@ ES_t Timer_enuSetClkPrescaler( u8 Copy_u8TimerNum , u8 Copy_u8PrescalerValue )
 	return ( (Local_enuErrorState == ES_NOK)? ES_OK : Local_enuErrorState ) ;
 }
 
-ES_t Timer_enuGetClkSelect( u8 Copy_u8TimerNum , u16 *Copy_pu8TimerClkSelect )
+ES_t PWM_enuGetClkSelect( u8 Copy_u8TimerNum , u16 *Copy_pu8TimerClkSelect )
 {
 	ES_t Local_enuErrorState = ES_OUT_RANGE ;
 
@@ -332,54 +408,64 @@ ES_t Timer_enuGetClkSelect( u8 Copy_u8TimerNum , u16 *Copy_pu8TimerClkSelect )
 	return Local_enuErrorState ;
 }
 
-ES_t Timer_enuSetCOM_Mode( u8 Copy_u8TimerNum , u8 Copy_u8COM_Mode )
+ES_t PWM_enuSetCOM_Mode( u8 Copy_u8TimerNum , u8 Copy_u8COM_Mode )
 {
 	ES_t Local_enuErrorState = ES_NOK;
 
 	u8 Local_u8CopyTIMSK = TIMSK ;														// Saving a Copy of Timer Interrupt Mask Register
 
-	if( Copy_u8TimerNum == TIMER0 )
+	if( Copy_u8COM_Mode == COMP_NON_INVERTED ||	Copy_u8COM_Mode == COMP_INVERTED )
 	{
-		TIMSK &= ~( TC0_INT_EN_MASK ) ;													// Disable Timer0 Interrupts
-		TCCR0 &= ~( COMP0_MAT_OUT_MODE_BITS_MASK ) ;									// Masking COM Select bits
-		TCCR0 |= ( ( Copy_u8COM_Mode - COMP_NORMAL) << COMP0_MAT_OUT_MODE_BITS ) ;		// Setting New Compare Output Mode
-		Timers[ TIMER0 - TIMER0 ].CompOutMode = Copy_u8COM_Mode ;
-	}
-	else if( Copy_u8TimerNum == TIMER1 || Copy_u8TimerNum == TIMER1A || Copy_u8TimerNum == TIMER1B )
-	{
-		TIMSK &= ~( TC1_INT_EN_MASK ) ;													// Disable Timer1 Interrupts
-		if( Copy_u8TimerNum == TIMER1A )
+		if( Copy_u8TimerNum == TIMER0 )
 		{
-			TCCR1A &= ~( COM1A_SEL_BITS_MASK ) ;										// Masking COM Select bits
-			TCCR1A |= ( ( Copy_u8COM_Mode - COMP_NORMAL) << COM1A_SEL_BITS ) ;			// Setting New Compare Output Mode
-			Timers[ TIMER1A - TIMER0 ].CompOutMode = Copy_u8COM_Mode ;
+			TIMSK &= ~( TC0_INT_EN_MASK ) ;													// Disable Timer0 Interrupts
+			TCCR0 &= ~( COMP0_MAT_OUT_MODE_BITS_MASK ) ;									// Masking COM Select bits
+			TCCR0 |= ( ( Copy_u8COM_Mode - COMP_NORMAL) << COMP0_MAT_OUT_MODE_BITS ) ;		// Setting New Compare Output Mode
+			Timers[ TIMER0 - TIMER0 ].CompOutMode = Copy_u8COM_Mode ;
 		}
-		else if( Copy_u8TimerNum == TIMER1B )
+		else if( Copy_u8TimerNum == TIMER1 || Copy_u8TimerNum == TIMER1A || Copy_u8TimerNum == TIMER1B )
 		{
-			TCCR1B &= ~( COM1B_SEL_BITS_MASK ) ;										// Masking COM Select bits
-			TCCR1B |= ( ( Copy_u8COM_Mode - COMP_NORMAL) << COM1B_SEL_BITS ) ;			// Setting New Compare Output Mode
-			Timers[ TIMER1B - TIMER0 ].CompOutMode = Copy_u8COM_Mode ;
+			TIMSK &= ~( TC1_INT_EN_MASK ) ;													// Disable Timer1 Interrupts
+			if( Copy_u8TimerNum == TIMER1A )
+			{
+				TCCR1A &= ~( COM1A_SEL_BITS_MASK ) ;										// Masking COM Select bits
+				TCCR1A |= ( ( Copy_u8COM_Mode - COMP_NORMAL) << COM1A_SEL_BITS ) ;			// Setting New Compare Output Mode
+				Timers[ TIMER1A - TIMER0 ].CompOutMode = Copy_u8COM_Mode ;
+			}
+			else if( Copy_u8TimerNum == TIMER1B )
+			{
+				TCCR1B &= ~( COM1B_SEL_BITS_MASK ) ;										// Masking COM Select bits
+				TCCR1B |= ( ( Copy_u8COM_Mode - COMP_NORMAL) << COM1B_SEL_BITS ) ;			// Setting New Compare Output Mode
+				Timers[ TIMER1B - TIMER0 ].CompOutMode = Copy_u8COM_Mode ;
+			}
+			else
+			{
+				#warning "Timer_enuSetCOM_Mode() : For setting COM mode please Specify TIMER1A / TIMER1B , TIMER1 choice is not allowed. No Action Taken. "
+			}
 		}
-		else
+		else if( Copy_u8TimerNum == TIMER2 )
 		{
-			#warning "Timer_enuSetCOM_Mode() : For setting COM mode please Specify TIMER1A / TIMER1B , TIMER1 choice is not allowed. No Action Taken. "
+			TIMSK &= ~( TC2_INT_EN_MASK ) ;													// Disable Timer2 Interrupts
+			TCCR2 &= ~( COMP2_MAT_OUT_MODE_BITS_MASK ) ;									// Masking COM Select bits
+			TCCR2 |= ( ( Copy_u8COM_Mode - COMP_NORMAL) << COMP2_MAT_OUT_MODE_BITS ) ;		// Setting New Compare Output Mode
+			Timers[ TIMER2 - TIMER0 ].CompOutMode = Copy_u8COM_Mode ;
 		}
-	}
-	else if( Copy_u8TimerNum == TIMER2 )
-	{
-		TIMSK &= ~( TC2_INT_EN_MASK ) ;													// Disable Timer2 Interrupts
-		TCCR2 &= ~( COMP2_MAT_OUT_MODE_BITS_MASK ) ;									// Masking COM Select bits
-		TCCR2 |= ( ( Copy_u8COM_Mode - COMP_NORMAL) << COMP2_MAT_OUT_MODE_BITS ) ;		// Setting New Compare Output Mode
-		Timers[ TIMER2 - TIMER0 ].CompOutMode = Copy_u8COM_Mode ;
-	}
-	else Local_enuErrorState = ES_OUT_RANGE ;
+		else Local_enuErrorState = ES_OUT_RANGE ;
 
-	TIMSK = Local_u8CopyTIMSK ;															// Re-setting Timer Interrupt Mask Register to its Status
+		TIMSK = Local_u8CopyTIMSK ;															// Re-setting Timer Interrupt Mask Register to its Status
+
+	}
+	else
+	{
+		Local_enuErrorState = ES_OUT_RANGE ;
+		#warning "PWM_enuSetCOM_Mode(): Non Supported Compare Output mode, No Action Taken ."
+	}
+
 
 	return ( (Local_enuErrorState == ES_NOK)? ES_OK : Local_enuErrorState ) ;
 }
 
-ES_t Timer_enuGetCOM_Mode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerCOM_Mode)
+ES_t PWM_enuGetCOM_Mode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerCOM_Mode)
 {
 	ES_t Local_enuErrorState = ES_OUT_RANGE ;
 
@@ -396,46 +482,59 @@ ES_t Timer_enuGetCOM_Mode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerCOM_Mode)
 }
 
 
-ES_t Timer_enuSetWGM_Mode( u8 Copy_u8TimerNum , u8 Copy_u8WGM_Mode )
+ES_t PWM_enuSetWGM_Mode( u8 Copy_u8TimerNum , u8 Copy_u8WGM_Mode )
 {
 	ES_t Local_enuErrorState = ES_NOK;
 
 
-	if( Copy_u8WGM_Mode == WGM_NORMAL_MODE || Copy_u8WGM_Mode == WGM_CTC_MODE || Copy_u8WGM_Mode == WGM_CTC_IRC1_MODE )
+	if( Copy_u8WGM_Mode > WGM_MODE_00	&& Copy_u8WGM_Mode <= WGM_FAST_OCR1A &&
+		Copy_u8WGM_Mode != WGM_MODE_04	&& Copy_u8WGM_Mode != WGM_MODE_12 && Copy_u8WGM_Mode != WGM_MODE_13 )
 	{
-		u8 Local_u8CopyTIMSK = TIMSK ;														// Saving a Copy of Timer Interrupt Mask Register
 
-		if( Copy_u8TimerNum == TIMER0 && ( Copy_u8WGM_Mode == WGM_NORMAL_MODE || Copy_u8WGM_Mode == WGM_CTC_MODE ) )
-		{
-			TIMSK &= ~( TC0_INT_EN_MASK ) ;													// Disable Timer0 Interrupts
-			TCCR0 &= ~( BIT0_MASK<< WGM01_BIT ) ;											// Masking WGM01 Select bit
-			TCCR0 |= ((( Copy_u8WGM_Mode - WGM_NORMAL_MODE ) >> BIT0_MASK ) << WGM01_BIT );	// Setting New Waveform Generation Mode
-			Timers[ TIMER0 - TIMER0 ].WaveGenMode = Copy_u8WGM_Mode ;
-		}
-		else if( Copy_u8TimerNum == TIMER1 || Copy_u8TimerNum == TIMER1A || Copy_u8TimerNum == TIMER1B )
-		{
-			TIMSK &= ~( TC1_INT_EN_MASK ) ;													// Disable Timer1 Interrupts
-			TCCR1B &= ~( WGM1B_SEL_BITS_MASK );												// Masking WGM1B Select bits
+		u8 Local_u8CopyTIMSK = TIMSK ;									// Saving a Copy of Timer Interrupt Mask Register
 
+		if( Copy_u8TimerNum == TIMER0 && ( Copy_u8WGM_Mode == WGM_PC_8_bit || Copy_u8WGM_Mode == WGM_FAST_8_bit ) )
+		{
+			TIMSK &= ~( TC0_INT_EN_MASK ) ;								// Disable Timer0 Interrupts
+			TCCR0 &= ~( BIT0_MASK<< WGM01_BIT ) ;						// Masking WGM01 Select bit
 			u8 Local_u8WGM;
 			switch( Copy_u8WGM_Mode )
 			{
-				case WGM_NORMAL_MODE	:	Local_u8WGM = WGM_MODE_00;
+				case WGM_PC_8_bit		:	Local_u8WGM = WGM_MODE_01;
 											break;
-				case WGM_CTC_MODE		:	Local_u8WGM = WGM_MODE_04;
-											break;
-				case WGM_CTC_IRC1_MODE	:	Local_u8WGM = WGM_MODE_12;
+				case WGM_FAST_8_bit		:	Local_u8WGM = WGM_MODE_03;
 											break;
 			}
-			TCCR1B |= ( Local_u8WGM << WGM1B_SEL_BITS );									// Setting New Waveform Generation Mode
+			TCCR0 |= ( BIT0_MASK<< WGM00_BIT ) ;						// Setting WGM00 Select bit to 1
+			TCCR0 |= ((Local_u8WGM >> BIT0_MASK ) << WGM01_BIT );		// Setting WGM01 Select bit to New Waveform Generation Mode
+			Timers[ TIMER0 - TIMER0 ].WaveGenMode = Copy_u8WGM_Mode ;
+		}
+		else if( ( 	Copy_u8TimerNum == TIMER1 || Copy_u8TimerNum == TIMER1A || Copy_u8TimerNum == TIMER1B ) &&
+					Copy_u8WGM_Mode > WGM_MODE_00	&& Copy_u8WGM_Mode <= WGM_FAST_OCR1A &&
+					Copy_u8WGM_Mode != WGM_MODE_04	&& Copy_u8WGM_Mode != WGM_MODE_12 && Copy_u8WGM_Mode != WGM_MODE_13 )
+		{
+			u8 Local_u8WGM = Copy_u8WGM_Mode - WGM_MODE_00 ;
+			TIMSK &= ~( TC1_INT_EN_MASK ) ;													// Disable Timer1 Interrupts
+			TCCR1B &= ~( WGM1B_SEL_BITS_MASK );												// Masking WGM1B Select bits
+			TCCR1A |= ( ( Local_u8WGM & TWO_BITS_MASK ) << WGM1A_SEL_BITS );				// Setting WGM10 & WGM11 Select bits
+			TCCR1B |= ( ( ( Local_u8WGM >> BIT1_MASK) & TWO_BITS_MASK ) << WGM1B_SEL_BITS );// Setting WGM12 & WGM13 Select bits
 			Timers[ TIMER1A - TIMER0 ].WaveGenMode = Copy_u8WGM_Mode ;
 			Timers[ TIMER1B - TIMER0 ].WaveGenMode = Copy_u8WGM_Mode ;
 		}
-		else if( Copy_u8TimerNum == TIMER2 && ( Copy_u8WGM_Mode == WGM_NORMAL_MODE || Copy_u8WGM_Mode == WGM_CTC_MODE ) )
+		else if( Copy_u8TimerNum == TIMER2 && ( Copy_u8WGM_Mode == WGM_PC_8_bit || Copy_u8WGM_Mode == WGM_FAST_8_bit ) )
 		{
-			TIMSK &= ~( TC2_INT_EN_MASK ) ;													// Disable Timer2 Interrupts
-			TCCR2 &= ~( BIT0_MASK<< WGM21_BIT ) ;											// Masking WGM21 Select bit
-			TCCR2 |= ((( Copy_u8WGM_Mode - WGM_NORMAL_MODE ) >> BIT0_MASK ) << WGM21_BIT  );// Setting New Waveform Generation Mode
+			TIMSK &= ~( TC2_INT_EN_MASK ) ;								// Disable Timer2 Interrupts
+			TCCR2 &= ~( BIT0_MASK<< WGM21_BIT ) ;						// Masking WGM21 Select bit
+			u8 Local_u8WGM;
+			switch( Copy_u8WGM_Mode )
+			{
+				case WGM_PC_8_bit		:	Local_u8WGM = WGM_MODE_01;
+											break;
+				case WGM_FAST_8_bit		:	Local_u8WGM = WGM_MODE_03;
+											break;
+			}
+			TCCR0 |= ( BIT0_MASK<< WGM20_BIT ) ;						// Setting WGM20 Select bit to 1
+			TCCR0 |= (( Local_u8WGM >> BIT0_MASK ) << WGM21_BIT );		// Setting WGM21 Select bit to NEW Waveform Generation Mode
 			Timers[ TIMER2 - TIMER0 ].WaveGenMode = Copy_u8WGM_Mode ;
 		}
 		else Local_enuErrorState = ES_OUT_RANGE ;
@@ -447,7 +546,7 @@ ES_t Timer_enuSetWGM_Mode( u8 Copy_u8TimerNum , u8 Copy_u8WGM_Mode )
 	return ( (Local_enuErrorState == ES_NOK)? ES_OK : Local_enuErrorState ) ;
 }
 
-ES_t Timer_enuGetWGM_Mode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerWGM_Mode)
+ES_t PWM_enuGetWGM_Mode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerWGM_Mode)
 {
 	ES_t Local_enuErrorState = ES_OUT_RANGE ;
 
@@ -463,38 +562,35 @@ ES_t Timer_enuGetWGM_Mode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerWGM_Mode)
 	}
 	return Local_enuErrorState ;
 }
-
+/*
 ES_t Timer_enuReset( u8 Copy_u8TimerNum )
 {
 	ES_t Local_enuErrorState = ES_NOK;
 
-	u8 Local_u8CopyTIMSK = TIMSK ;									// Saving a Copy of Timer Interrupt Mask Register
+	u8 Local_u8Temp = SREG ;									// Saving a Copy of AVR Status Register
+	asm( "CLI" );												// Disable All Interrupts while writing to Counter Register
 
 	if( Copy_u8TimerNum == TIMER0 )
 	{
-		TIMSK &= ~( TC0_INT_EN_MASK ) ;								// Disable Timer0 Interrupts
 		TCNT0 = 0x00 ;
-		TIMSK = Local_u8CopyTIMSK ;									// Re-setting Timer Interrupt Mask Register to its Status
 	}
 	else if( Copy_u8TimerNum == TIMER1 || Copy_u8TimerNum == TIMER1A || Copy_u8TimerNum == TIMER1B )
 	{
-		u8 Local_u8Temp = SREG ;									// Saving a Copy of AVR Status Register
-		asm( "CLI" );												// Disable All Interrupts while writing to 16-bit Counter Register TCNT1
 		TCNT1H = 0x00 ;
 		TCNT1L = 0x00 ;
-		SREG = Local_u8Temp;										// Re-setting AVR Status Register to its Status
 	}
 	else if( Copy_u8TimerNum == TIMER2 )
 	{
-		TIMSK &= ~( TC2_INT_EN_MASK ) ;								// Disable Timer2 Interrupts
 		TCNT2 = 0x00 ;
-		TIMSK = Local_u8CopyTIMSK ;									// Re-setting Timer Interrupt Mask Register to its Status
 	}
 	else Local_enuErrorState = ES_OUT_RANGE;
 
+	SREG = Local_u8Temp;										// Re-setting AVR Status Register to its Status
+
 	return ( (Local_enuErrorState == ES_NOK)? ES_OK : Local_enuErrorState ) ;
 }
-
+*/
+/*
 ES_t Timer_enuReadCounterValue( u8 Copy_u8TimerNum , void *Copy_pCounterValue )
 {
 	ES_t Local_enuErrorState = ES_NOK;
@@ -523,8 +619,8 @@ ES_t Timer_enuReadCounterValue( u8 Copy_u8TimerNum , void *Copy_pCounterValue )
 
 	return ( (Local_enuErrorState == ES_NOK)? ES_OK : Local_enuErrorState ) ;
 }
-
-ES_t Timer_enuSetOCRnValue( u8 Copy_u8TimerNum , u16 Copy_u16OCRnValue )
+*/
+ES_t PWM_enuSetOCRnValue( u8 Copy_u8TimerNum , u16 Copy_u16OCRnValue )
 {
 	ES_t Local_enuErrorState = ES_NOK ;
 
@@ -540,7 +636,7 @@ ES_t Timer_enuSetOCRnValue( u8 Copy_u8TimerNum , u16 Copy_u16OCRnValue )
 		OCR1AH  = Copy_u16OCRnValue >> 8 ;
 		OCR1AL 	= Copy_u16OCRnValue ;
 		SREG = Local_u8Temp;
-		Global_u8OCR1A_Value = Copy_u16OCRnValue ;
+		Global_u16OCR1A_Value = Copy_u16OCRnValue ;
 	}
 	else if( Copy_u8TimerNum == TIMER1B && Copy_u16OCRnValue <= Timer1Max )
 	{
@@ -549,7 +645,7 @@ ES_t Timer_enuSetOCRnValue( u8 Copy_u8TimerNum , u16 Copy_u16OCRnValue )
 		OCR1BH  = Copy_u16OCRnValue >> 8 ;
 		OCR1BL 	= Copy_u16OCRnValue ;
 		SREG = Local_u8Temp;
-		Global_u8OCR1B_Value = Copy_u16OCRnValue ;
+		Global_u16OCR1B_Value = Copy_u16OCRnValue ;
 	}
 	else if( Copy_u8TimerNum == TIMER2 && Copy_u16OCRnValue <= Timer2Max )
 	{
@@ -561,7 +657,7 @@ ES_t Timer_enuSetOCRnValue( u8 Copy_u8TimerNum , u16 Copy_u16OCRnValue )
 	return ( (Local_enuErrorState == ES_NOK)? ES_OK : Local_enuErrorState ) ;
 }
 
-ES_t Timer_enuReadOCRnValue( u8 Copy_u8TimerNum , void *Copy_pCounterValue )
+ES_t PWM_enuReadOCRnValue( u8 Copy_u8TimerNum , void *Copy_pCounterValue )
 {
 	ES_t Local_enuErrorState = ES_NOK ;
 
@@ -571,11 +667,11 @@ ES_t Timer_enuReadOCRnValue( u8 Copy_u8TimerNum , void *Copy_pCounterValue )
 		}
 		else if( Copy_u8TimerNum == TIMER1A )
 		{
-			*( (u16 *)Copy_pCounterValue ) = Global_u8OCR1A_Value ;
+			*( (u16 *)Copy_pCounterValue ) = Global_u16OCR1A_Value ;
 		}
 		else if( Copy_u8TimerNum == TIMER1B )
 		{
-			*( (u16 *)Copy_pCounterValue ) = Global_u8OCR1B_Value ;
+			*( (u16 *)Copy_pCounterValue ) = Global_u16OCR1B_Value ;
 		}
 		else if( Copy_u8TimerNum == TIMER2 )
 		{
@@ -584,275 +680,26 @@ ES_t Timer_enuReadOCRnValue( u8 Copy_u8TimerNum , void *Copy_pCounterValue )
 		else Local_enuErrorState = ES_OUT_RANGE ;
 
 		return ( (Local_enuErrorState == ES_NOK)? ES_OK : Local_enuErrorState ) ;
-
 }
 
-
+ES_t PWM_enuSetICR1Value( u16 Copy_u16ICR1Value )
+{
+	u8 Local_u8Temp = SREG ;
+	asm( "CLI" );
+	ICR1H = Copy_u16ICR1Value >> 8 ;
+	ICR1L = Copy_u16ICR1Value ;
+	SREG = Local_u8Temp;
+	Global_u16ICR1_Value = Copy_u16ICR1Value ;
+	return ES_OK;
+}
+/*
+ES_t Timer_enuReadICR1Value( u16 *Copy_pu16ICR1Value )
+{
+	*Copy_pu16ICR1Value = Global_u16ICR1_Value ;
+	return ES_OK;
+}
+*/
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-ES_t Timer_PollingDelay(u8 Copy_u8TimerNum ,u16 Copy_u16Delay_ms ) // POLLING Delay*******************************************///////////////////////////////////
-{
-	ES_t Local_enuErrorState = ES_NOK;
-
-	u8 Local_u8Flag = 0 , Local_u8COMmode = 0;						/////////////////////////////////////////////////////******************************************
-	u32 Local_u32OverFlowCounts ;
-
-	for( u8 Local_u8Iter = 0 ; Local_u8Iter < Timers_u8MaxNum ; Local_u8Iter++ )
-	{
-		if( Timers[Local_u8Iter].TimerNum == Copy_u8TimerNum )
-			{
-				Local_u8COMmode = Timers[Local_u8Iter].CompOutMode;
-				break;
-			}
-	}
-
-	if( Copy_u8TimerNum == TIMER0)
-	{
-		if( Global_u32Timer0_Clk )
-		{
-			switch( Local_u8COMmode )
-			{
-			case  COMP_NORMAL		:	Local_u32OverFlowCounts = ( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer0_Clk ) / ( 1000UL ) )
-																										+ TIMER0_MAX ) / ( TIMER0_MAX + 1 );	/*	Total Overflows	*/
-										TCNT0 = ( TIMER0_MAX + 1 ) -
-												( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer0_Clk ) / ( 1000UL ) ) % (u16)( TIMER0_MAX + 1 ) );	/* PRE-LOAD value	*/									/*	PreLoad Value	*/
-
-										while( Local_u32OverFlowCounts > TIMER0_BOTTOM )									/*	Delay LOOP							*/
-										{
-											while( !(( TIFR >> TOV0_BIT) & BIT0_MASK ) );									/*	Waiting for Timer0 Overflow flag	*/
-											Local_u32OverFlowCounts--;
-											TIFR |= (BIT0_MASK << TOV0_BIT);												/*	Clearing Timer0 Overflow flag		*/
-										}
-										break;
-
-			case  COMP_TOG_ON_MATCH	:	Local_u32OverFlowCounts = ( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer0_Clk ) / (2 * 1000UL ) )
-																				+ Global_u8OCR0_Value ) / (u16)( Global_u8OCR0_Value + 1 ) ;				/*	Total Overflows	*/
-										TCNT0 = ( Global_u8OCR0_Value + 1 ) -
-												( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer0_Clk ) / ( 2* 1000UL ) ) % (u16)( Global_u8OCR0_Value + 1 ) );/*	PreLoad Value	*/
-
-										while( Local_u32OverFlowCounts > TIMER0_BOTTOM )									/*	Delay LOOP								*/
-										{
-										while( !(( TIFR >> OCF0_BIT) & BIT0_MASK ) );										/*	Waiting for Timer0 Output Compare flag	*/
-										Local_u32OverFlowCounts--;
-										TIFR |= (BIT0_MASK << OCF0_BIT);													/*	Clearing Timer0 Overflow flag			*/
-										}
-										break;
-
-			case  COMP_NON_INVERTED	:	/*	Same as COMP_INVERTED case	*/
-			case  COMP_INVERTED		:	Local_u32OverFlowCounts = ( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer0_Clk ) / ( 1000UL ) )
-																				+ Global_u8OCR0_Value ) / ( Global_u8OCR0_Value + 1 );						/*	Total Overflows	*/
-										TCNT0 = ( Global_u8OCR0_Value + 1 ) -
-												( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer0_Clk ) / ( 1000UL ) ) % (u16)( Global_u8OCR0_Value + 1 ) );	/*	PreLoad Value	*/
-
-										while( Local_u32OverFlowCounts > TIMER0_BOTTOM )
-										{
-										while( !(( TIFR >> OCF0_BIT) & BIT0_MASK ) );	/*	Waiting for Timer0 Output Compare flag	*/
-										Local_u32OverFlowCounts--;
-										TIFR |= (BIT0_MASK << OCF0_BIT);	/*	Clearing Timer0 Overflow flag	*/
-										}
-										break;
-			default		: Local_enuErrorState = ES_OUT_RANGE;
-										break;
-			}
-		}
-	}
-	else if( Copy_u8TimerNum == TIMER1A)
-	{
-		if( Global_u32Timer1_Clk )
-		{
-			u16 Local_u16CounterPreLoad ;
-			u8 Local_u8CopySREG = SREG ;
-
-			switch( Local_u8COMmode )
-			{
-			case  COMP_NORMAL		:	Local_u32OverFlowCounts = ( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer1_Clk ) / ( 1000UL ) )
-																										+ TIMER1_MAX ) / ( TIMER1_MAX + 1 );	/*	Total Overflows	*/
-										Local_u16CounterPreLoad = ( TIMER1_MAX + 1 ) -
-												( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer1_Clk ) / ( 1000UL ) ) % (u16)( TIMER1_MAX + 1 ) );	/* PRE-LOAD value	*/
-										asm( "CLI" );
-										TCNT1H = ( Local_u16CounterPreLoad >> 8) ;
-										TCNT1L = Local_u16CounterPreLoad ;
-										SREG = Local_u8CopySREG ;
-										while( Local_u32OverFlowCounts > TIMER1_BOTTOM )									/*	Delay LOOP							*/
-										{
-											while( !(( TIFR >> TOV1_BIT) & BIT0_MASK ) );									/*	Waiting for Timer1 Overflow flag	*/
-											Local_u32OverFlowCounts--;
-											TIFR |= (BIT0_MASK << TOV1_BIT);												/*	Clearing Timer1 Overflow flag		*/
-										}
-										break;
-
-			case  COMP_TOG_ON_MATCH	:	Local_u32OverFlowCounts = ( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer1_Clk ) / (2 * 1000UL ) )
-																				+ Global_u8OCR1A_Value ) / (u16)( Global_u8OCR1A_Value + 1 ) ;	/*	Total Overflows	*/
-										Local_u16CounterPreLoad = ( Global_u8OCR1A_Value + 1 ) -
-												( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer1_Clk ) / ( 2* 1000UL ) ) % (u16)( Global_u8OCR1A_Value + 1 ) );	/*	PreLoad Value	*/
-										asm( "CLI" );
-										TCNT1H = ( Local_u16CounterPreLoad >> 8) ;
-										TCNT1L = Local_u16CounterPreLoad ;
-										SREG = Local_u8CopySREG ;
-										while( Local_u32OverFlowCounts > TIMER1_BOTTOM )									/*	Delay LOOP							*/
-										{
-										while( !(( TIFR >> OCF1A_BIT) & BIT0_MASK ) );										/*	Waiting for Timer1A Output Compare flag	*/
-										Local_u32OverFlowCounts--;
-										TIFR |= (BIT0_MASK << OCF1A_BIT);													/*	Clearing Timer1A Output Compare flag	*/
-										}
-										break;
-
-			case  COMP_NON_INVERTED	:	/*	Same as COMP_INVERTED case	*/
-			case  COMP_INVERTED		:	Local_u32OverFlowCounts = ( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer1_Clk ) / ( 1000UL ) )
-																				+ Global_u8OCR1A_Value ) / ( Global_u8OCR1A_Value + 1 );					/*	Total Overflows	*/
-										Local_u16CounterPreLoad = ( Global_u8OCR1A_Value + 1 ) -
-												( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer1_Clk ) / ( 1000UL ) ) % (u16)( Global_u8OCR1A_Value + 1 )) ;	/*	PreLoad Value	*/
-										asm( "CLI" );
-										TCNT1H = ( Local_u16CounterPreLoad >> 8) ;
-										TCNT1L = Local_u16CounterPreLoad ;
-										SREG = Local_u8CopySREG ;
-										while( Local_u32OverFlowCounts > TIMER1_BOTTOM )
-										{
-										while( !(( TIFR >> OCF1A_BIT) & BIT0_MASK ) );										/*	Waiting for Timer1A Output Compare flag	*/
-										Local_u32OverFlowCounts--;
-										TIFR |= (BIT0_MASK << OCF1A_BIT);													/*	Clearing Timer1A Output Compare flag	*/
-										}
-										break;
-			default		: Local_enuErrorState = ES_OUT_RANGE;
-										break;
-			}
-		}
-
-	}
-	else if( Copy_u8TimerNum == TIMER1B)
-	{
-		if( Global_u32Timer1_Clk )
-		{
-			u16 Local_u16CounterPreLoad ;
-			u8 Local_u8CopySREG = SREG ;
-
-			switch( Local_u8COMmode )
-			{
-			case  COMP_NORMAL		:	Local_u32OverFlowCounts = ( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer1_Clk ) / ( 1000UL ) )
-																										+ TIMER1_MAX ) / ( TIMER1_MAX + 1 );	/*	Total Overflows	*/
-										Local_u16CounterPreLoad = ( TIMER1_MAX + 1 ) -
-												( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer1_Clk ) / ( 1000UL ) ) % (u16)( TIMER1_MAX + 1 ) );	/* PRE-LOAD value	*/
-										asm( "CLI" );
-										TCNT1H = ( Local_u16CounterPreLoad >> 8) ;
-										TCNT1L = Local_u16CounterPreLoad ;
-										SREG = Local_u8CopySREG ;
-										while( Local_u32OverFlowCounts > TIMER1_BOTTOM )									/*	Delay LOOP							*/
-										{
-											while( !(( TIFR >> TOV1_BIT) & BIT0_MASK ) );									/*	Waiting for Timer1 Overflow flag	*/
-											Local_u32OverFlowCounts--;
-											TIFR |= (BIT0_MASK << TOV1_BIT);												/*	Clearing Timer1 Overflow flag		*/
-										}
-										break;
-
-			case  COMP_TOG_ON_MATCH	:	Local_u32OverFlowCounts = ( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer1_Clk ) / (2 * 1000UL ) )
-																				+ Global_u8OCR1B_Value ) / (u16)( Global_u8OCR1B_Value + 1 ) ;	/*	Total Overflows	*/
-										Local_u16CounterPreLoad = ( Global_u8OCR1B_Value + 1 ) -
-												( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer1_Clk ) / ( 2* 1000UL ) ) % (u16)( Global_u8OCR1B_Value + 1 ) );	/*	PreLoad Value	*/
-										asm( "CLI" );
-										TCNT1H = ( Local_u16CounterPreLoad >> 8) ;
-										TCNT1L = Local_u16CounterPreLoad ;
-										SREG = Local_u8CopySREG ;
-										while( Local_u32OverFlowCounts > TIMER1_BOTTOM )									/*	Delay LOOP							*/
-										{
-										while( !(( TIFR >> OCF1B_BIT) & BIT0_MASK ) );										/*	Waiting for Timer1A Output Compare flag	*/
-										Local_u32OverFlowCounts--;
-										TIFR |= (BIT0_MASK << OCF1B_BIT);													/*	Clearing Timer1A Output Compare flag	*/
-										}
-										break;
-
-			case  COMP_NON_INVERTED	:	/*	Same as COMP_INVERTED case	*/
-			case  COMP_INVERTED		:	Local_u32OverFlowCounts = ( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer1_Clk ) / ( 1000UL ) )
-																				+ Global_u8OCR1B_Value ) / ( Global_u8OCR1B_Value + 1 );					/*	Total Overflows	*/
-										Local_u16CounterPreLoad = ( Global_u8OCR1B_Value + 1 ) -
-												( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer1_Clk ) / ( 1000UL ) ) % (u16)( Global_u8OCR1B_Value + 1 )) ;	/*	PreLoad Value	*/
-										asm( "CLI" );
-										TCNT1H = ( Local_u16CounterPreLoad >> 8) ;
-										TCNT1L = Local_u16CounterPreLoad ;
-										SREG = Local_u8CopySREG ;
-										while( Local_u32OverFlowCounts > TIMER1_BOTTOM )
-										{
-										while( !(( TIFR >> OCF1B_BIT) & BIT0_MASK ) );										/*	Waiting for Timer1A Output Compare flag	*/
-										Local_u32OverFlowCounts--;
-										TIFR |= (BIT0_MASK << OCF1B_BIT);													/*	Clearing Timer1A Output Compare flag	*/
-										}
-										break;
-			default		: Local_enuErrorState = ES_OUT_RANGE;
-										break;
-			}
-		}
-
-	}
-	else if( Copy_u8TimerNum == TIMER2 )
-	{
-		if( Global_u32Timer2_Clk )
-		{
-			switch( Local_u8COMmode )
-			{
-			case  COMP_NORMAL		:	Local_u32OverFlowCounts = ( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer2_Clk ) / ( 1000UL ) )
-																										+ TIMER2_MAX ) / ( TIMER2_MAX + 1 );	/*	Total Overflows	*/
-										TCNT2 = ( TIMER2_MAX + 1 ) -
-												( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer2_Clk ) / ( 1000UL ) ) % (u16)( TIMER2_MAX + 1 ) );	/* PRE-LOAD value	*/									/*	PreLoad Value	*/
-
-										while( Local_u32OverFlowCounts > TIMER2_BOTTOM )									/*	Delay LOOP							*/
-										{
-											while( !(( TIFR >> TOV2_BIT) & BIT0_MASK ) );									/*	Waiting for Timer2 Overflow flag	*/
-											Local_u32OverFlowCounts--;
-											TIFR |= (BIT0_MASK << TOV2_BIT);												/*	Clearing Timer2 Overflow flag		*/
-										}
-										break;
-
-			case  COMP_TOG_ON_MATCH	:	Local_u32OverFlowCounts = ( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer2_Clk ) / (2 * 1000UL ) )
-																				+ Global_u8OCR2_Value ) / (u16)( Global_u8OCR2_Value + 1 ) ;				/*	Total Overflows	*/
-										TCNT2 = ( Global_u8OCR2_Value + 1 ) -
-												( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer2_Clk ) / ( 2* 1000UL ) ) % (u16)( Global_u8OCR2_Value + 1 ) );/*	PreLoad Value	*/
-
-										while( Local_u32OverFlowCounts > TIMER2_BOTTOM )									/*	Delay LOOP								*/
-										{
-										while( !(( TIFR >> OCF2_BIT) & BIT0_MASK ) );										/*	Waiting for Timer2 Output Compare flag	*/
-										Local_u32OverFlowCounts--;
-										TIFR |= (BIT0_MASK << OCF2_BIT);													/*	Clearing Timer2 Overflow flag			*/
-										}
-										break;
-
-			case  COMP_NON_INVERTED	:	/*	Same as COMP_INVERTED case	*/
-			case  COMP_INVERTED		:	Local_u32OverFlowCounts = ( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer2_Clk ) / ( 1000UL ) )
-																				+ Global_u8OCR2_Value ) / ( Global_u8OCR2_Value + 1 );						/*	Total Overflows	*/
-										TCNT2 = ( Global_u8OCR2_Value + 1 ) -
-												( ( ( Copy_u16Delay_ms * (u64)Global_u32Timer2_Clk ) / ( 1000UL ) ) % (u16)( Global_u8OCR2_Value + 1 ) );	/*	PreLoad Value	*/
-
-										while( Local_u32OverFlowCounts > TIMER2_BOTTOM )
-										{
-										while( !(( TIFR >> OCF2_BIT) & BIT0_MASK ) );										/*	Waiting for Timer2 Output Compare flag	*/
-										Local_u32OverFlowCounts--;
-										TIFR |= (BIT0_MASK << OCF2_BIT);													/*	Clearing Timer2 Overflow flag	*/
-										}
-										break;
-			default		: Local_enuErrorState = ES_OUT_RANGE;
-										break;
-			}
-		}
-
-	}
-	else Local_enuErrorState = ES_OUT_RANGE;
-
-	return ( (Local_enuErrorState == ES_NOK)? ES_OK : Local_enuErrorState ) ;
-}
-
-
-ES_t Timer_ISR_Delay(u8 Copy_u8TimerNum , u16 Copy_u16Delay_ms , void (*Copy_pFun)(void *) , void *Copy_pAppVar ) // ISR Delay
-{
-	ES_t Local_enuErrorState = ES_NOK;
-
-	if(Copy_pFun != NULL)
-	{
-
-
-
-	}
-	else Local_enuErrorState = ES_NULL_POINTER;
-
-
-	return Local_enuErrorState ;
-}
 
 void Timer_vidTOIE0(void *Copy_pTOV0Counter)
 {
@@ -865,7 +712,7 @@ void Timer_vidOCIE0(void *Copy_pOC0Counter )
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-ES_t Timer_enuInterruptEnable( u8 Copy_u8TimerIntName)
+ES_t PWM_enuInterruptEnable( u8 Copy_u8TimerIntName)
 {
 	ES_t Local_enuErrorState = ES_NOK;
 
@@ -897,7 +744,7 @@ ES_t Timer_enuInterruptEnable( u8 Copy_u8TimerIntName)
 	return ( (Local_enuErrorState == ES_NOK)? ES_OK : Local_enuErrorState ) ;
 }
 
-ES_t Timer_enuInterruptDisable( u8 Copy_u8TimerIntName)
+ES_t PWM_enuInterruptDisable( u8 Copy_u8TimerIntName)
 {
 	ES_t Local_enuErrorState = ES_NOK;
 
@@ -930,7 +777,7 @@ ES_t Timer_enuInterruptDisable( u8 Copy_u8TimerIntName)
 	return ( (Local_enuErrorState == ES_NOK)? ES_OK : Local_enuErrorState ) ;
 }
 
-bool Timer_IsInterruptEnabled( u8 Copy_u8TimerIntName )
+bool PWM_IsInterruptEnabled( u8 Copy_u8TimerIntName )
 {
 	u8 Local_u8Status = 0 ;
 
@@ -953,11 +800,11 @@ bool Timer_IsInterruptEnabled( u8 Copy_u8TimerIntName )
 		case OCIE2	:	Local_u8Status |= ( (TIMSK >> OCIE2_BIT) & BIT0_MASK );
 						break;
 	}
-	return ( ( Local_u8Status)? TRUE : FALSE ) ;
+	return ( ( Local_u8Status )? TRUE : FALSE ) ;
 }
 
 
-ES_t Timer_enuCallBack( u8 Copy_u8TimerIntName , void (*Copy_pAppFun)(void*) , void *Copy_pAppVar)
+ES_t PWM_enuCallBack( u8 Copy_u8TimerIntName , void (*Copy_pAppFun)(void*) , void *Copy_pAppVar)
 {
 	ES_t Local_enuErrorState = ES_NOK;
 

@@ -5,6 +5,14 @@
  *      Author: Bassem El-behaidy
  */
 
+
+int
+main(void)
+{
+
+}
+
+/*
 #include "../Libraries/stdTypes.h"
 #include "../Libraries/errorState.h"
 

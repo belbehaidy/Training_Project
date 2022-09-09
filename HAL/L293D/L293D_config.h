@@ -22,6 +22,7 @@ typedef struct
 typedef struct
 {
 	u8 MotorNum;
+	u8 PWM ;
 	Pin_t EN;
 	Pin_t A;
 	Pin_t B;
@@ -44,7 +45,8 @@ typedef struct
 #define H_B1_GRP		DIO_u8GROUP_C
 #define H_B1_PIN		DIO_u8PIN4
 
-#define MOTOR1_PWM		PWM1A
+#define MOTOR1_PWM		TIMER1B
+
 /****************************************/
 /*			MOTOR1 Configuration		*/
 /****************************************/
@@ -57,7 +59,6 @@ typedef struct
 #define H_B2_GRP		DIO_u8GROUP_C
 #define H_B2_PIN		DIO_u8PIN6
 
-#define MOTOR1_PWM		PWM1B
-
+#define MOTOR2_PWM		TIMER1A
 
 #endif /* HAL_L293D_L293D_CONFIG_H_ */

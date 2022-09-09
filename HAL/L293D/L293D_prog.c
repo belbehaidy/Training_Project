@@ -10,6 +10,8 @@
 
 #include "..\..\MCAL\DIO\DIO_int.h"
 #include "..\..\MCAL\PWM\PWM_int.h"
+#include "..\..\MCAL\GIE\GIE_int.h"
+
 
 #include "L293D_priv.h"
 #include "L293D_config.h"
@@ -19,51 +21,60 @@ extern Motor_t Motors[];
 
 ES_t L293D_enuInit( void )
 {
-	ES_t Local_enuErrorState = ES_NOK , Local_AenuErrorStates[2];
+	ES_t Local_enuErrorState = ES_NOK , Local_AenuErrorStates[4];
 
-	/* 		Setting H-Bridge EN1 Pin 		*/
-	Local_AenuErrorStates[0] = DIO_enuSetPinDirection( H_EN1_GRP , H_EN1_PIN , DIO_u8OUTPUT);
-	Local_AenuErrorStates[1] = DIO_enuSetPinValue( H_EN1_GRP , H_EN1_PIN , DIO_u8LOW);
-
-	if( Local_AenuErrorStates[0] == ES_OK && Local_AenuErrorStates[1] == ES_OK)
+	for(u8 Local_u8Iter = 0 ; Local_u8Iter < Motors_u8MaxNum ; Local_u8Iter++)
 	{
-		/* 		Setting H-Bridge EN2 Pin 		*/
-		Local_AenuErrorStates[0] = DIO_enuSetPinDirection( H_EN2_GRP , H_EN2_PIN , DIO_u8OUTPUT);
-		Local_AenuErrorStates[1] = DIO_enuSetPinValue( H_EN2_GRP , H_EN2_PIN , DIO_u8LOW);
+		/****************************************/
+		/* 			Setting Motor EN Pin 		*/
+		/****************************************/
+		Local_AenuErrorStates[0] = DIO_enuSetPinDirection(	Motors[Local_u8Iter].EN.PinGrp , Motors[Local_u8Iter].EN.PinNum , DIO_u8OUTPUT);
+		Local_AenuErrorStates[1] = DIO_enuSetPinValue(	Motors[Local_u8Iter].EN.PinGrp , Motors[Local_u8Iter].EN.PinNum , DIO_u8LOW);
 
 		if( Local_AenuErrorStates[0] == ES_OK && Local_AenuErrorStates[1] == ES_OK)
 		{
-			/* 		Setting H-Bridge A1 Pin 		*/
-			Local_AenuErrorStates[0] = DIO_enuSetPinDirection( H_A1_GRP , H_A1_PIN , DIO_u8OUTPUT);
-			Local_AenuErrorStates[1] = DIO_enuSetPinValue( H_A1_GRP , H_A1_PIN , DIO_u8LOW);
+			/****************************************/
+			/* 		Setting Motor A Pin 			*/
+			/****************************************/
+			Local_AenuErrorStates[0] = DIO_enuSetPinDirection(	Motors[Local_u8Iter].A.PinGrp , Motors[Local_u8Iter].A.PinNum , DIO_u8OUTPUT);
+			Local_AenuErrorStates[1] = DIO_enuSetPinValue(	Motors[Local_u8Iter].A.PinGrp , Motors[Local_u8Iter].A.PinNum , DIO_u8LOW);
 
-			if( Local_AenuErrorStates[0] == ES_OK && Local_AenuErrorStates[1] == ES_OK)
+			/****************************************/
+			/* 		Setting Motor B Pin 			*/
+			/****************************************/
+			Local_AenuErrorStates[2] = DIO_enuSetPinDirection(	Motors[Local_u8Iter].B.PinGrp , Motors[Local_u8Iter].B.PinNum , DIO_u8OUTPUT);
+			Local_AenuErrorStates[3] = DIO_enuSetPinValue(	Motors[Local_u8Iter].B.PinGrp , Motors[Local_u8Iter].B.PinNum , DIO_u8LOW);
+
+			if( Local_AenuErrorStates[0] == ES_OK && Local_AenuErrorStates[1] == ES_OK &&
+				Local_AenuErrorStates[2] == ES_OK && Local_AenuErrorStates[3] == ES_OK)
 			{
-				/* 		Setting H-Bridge A2 Pin 		*/
-				Local_AenuErrorStates[0] = DIO_enuSetPinDirection( H_A2_GRP , H_A2_PIN , DIO_u8OUTPUT);
-				Local_AenuErrorStates[1] = DIO_enuSetPinValue( H_A2_GRP , H_A2_PIN , DIO_u8LOW);
+				/****************************************/
+				/* 		Setting Motor PWM Source		*/
+				/****************************************/
+				Local_AenuErrorStates[0] = PWM_enuInit() ;
+				Local_AenuErrorStates[1] = GIE_enuInit() ;
 
-				if( Local_AenuErrorStates[0] == ES_OK && Local_AenuErrorStates[1] == ES_OK)
+				if( Local_AenuErrorStates[0] == ES_OK && Local_AenuErrorStates[1] == ES_OK )
 				{
-					/* 		Setting H-Bridge A3 Pin 		*/
-					Local_AenuErrorStates[0] = DIO_enuSetPinDirection( H_A3_GRP , H_A3_PIN , DIO_u8OUTPUT);
-					Local_AenuErrorStates[1] = DIO_enuSetPinValue( H_A3_GRP , H_A3_PIN , DIO_u8LOW);
+					Local_AenuErrorStates[0] = PWM_enuSetWGM_Mode( Motors[Local_u8Iter].PWM , WGM_PC_8_bit );
+					Local_AenuErrorStates[1] = PWM_enuSetClkPrescaler( Motors[Local_u8Iter].PWM , PRES_8 );
+					Local_AenuErrorStates[2] = PWM_enuSetCOM_Mode( Motors[Local_u8Iter].PWM , COMP_NON_INVERTED );
+					Local_AenuErrorStates[3] = PWM_enuSetInterruptMode( Motors[Local_u8Iter].PWM , TC_OUT_COMP_INT );
 
-					if( Local_AenuErrorStates[0] == ES_OK && Local_AenuErrorStates[1] == ES_OK)
+					if( Local_AenuErrorStates[0] == ES_OK && Local_AenuErrorStates[1] == ES_OK &&
+						Local_AenuErrorStates[2] == ES_OK && Local_AenuErrorStates[3] == ES_OK)
 					{
-						/* 		Setting H-Bridge A4 Pin 		*/
-						Local_AenuErrorStates[0] = DIO_enuSetPinDirection( H_A4_GRP , H_A4_PIN , DIO_u8OUTPUT);
-						Local_AenuErrorStates[1] = DIO_enuSetPinValue( H_A4_GRP , H_A4_PIN , DIO_u8LOW);
+						Local_AenuErrorStates[0] = PWM_enuSetDutyCycle( Motors[Local_u8Iter].PWM , 0 );
+						Local_AenuErrorStates[1] = GIE_enuEnable();
 					}
-				}
-			}
-		}
+				 }
+			 }
+		 }
 	}
 
-	if( Local_AenuErrorStates[0] == ES_OK && Local_AenuErrorStates[1] == ES_OK)
+	if( Local_AenuErrorStates[0] == ES_OK && Local_AenuErrorStates[1] == ES_OK &&
+		Local_AenuErrorStates[2] == ES_OK && Local_AenuErrorStates[3] == ES_OK)
 		Local_enuErrorState = ES_OK ;
-
-	//////////////////////////////////////////we need to set the PWM module settings as well
 
 	return Local_enuErrorState ;
 }
@@ -74,48 +85,33 @@ ES_t Le93D_enuSetDirectio( u8 Copy_u8MotorNum , u8 Copy_u8MotorDirection)
 
 	if( Copy_u8MotorDirection == CLOCK_WISE_DIRECTION || Copy_u8MotorDirection == COUNTER_CLOCK_WISE_DIRECTION )
 	{
-		if( Copy_u8MotorNum == MOTOR1 )
+
+		for( u8 Local_u8Iter = 0 ; Local_u8Iter < Motors_u8MaxNum ; Local_u8Iter++ )
+		{
+			if( Motors[Local_u8Iter].MotorNum == Copy_u8MotorNum )
 			{
-
-				if( PWM_1_enuDisable( ) == ES_OK )
+				switch( Copy_u8MotorDirection )
 				{
-					switch( Copy_u8MotorDirection )
-					{
-						case 		CLOCK_WISE_DIRECTION	:	Local_AenuErrorStates[0] = DIO_enuSetPinValue( H_A1_GRP , H_A1_PIN , DIO_u8LOW);
-																Local_AenuErrorStates[1] = DIO_enuSetPinValue( H_A2_GRP , H_A2_PIN , DIO_u8LOW);
-																Local_AenuErrorStates[2] = DIO_enuSetPinValue( H_A1_GRP , H_A1_PIN , DIO_u8HIGH);
-									break;
+					case 		CLOCK_WISE_DIRECTION	:	Local_AenuErrorStates[0] = DIO_enuSetPinValue(	Motors[Local_u8Iter].A.PinGrp ,
+																											Motors[Local_u8Iter].A.PinNum ,	DIO_u8LOW);
+															Local_AenuErrorStates[1] = DIO_enuSetPinValue( 	Motors[Local_u8Iter].B.PinGrp ,
+																											Motors[Local_u8Iter].B.PinNum , DIO_u8LOW);
+															Local_AenuErrorStates[2] = DIO_enuSetPinValue( 	Motors[Local_u8Iter].A.PinGrp ,
+																											Motors[Local_u8Iter].A.PinNum , DIO_u8HIGH);
+															break;
 
-						case COUNTER_CLOCK_WISE_DIRECTION	:	Local_AenuErrorStates[0] = DIO_enuSetPinValue( H_A2_GRP , H_A2_PIN , DIO_u8LOW);
-																Local_AenuErrorStates[1] = DIO_enuSetPinValue( H_A1_GRP , H_A1_PIN , DIO_u8LOW);
-																Local_AenuErrorStates[2] = DIO_enuSetPinValue( H_A2_GRP , H_A2_PIN , DIO_u8HIGH);
-									break;
-					}
-					if( Local_AenuErrorStates[0] == ES_OK && Local_AenuErrorStates[1] == ES_OK && Local_AenuErrorStates[2] == ES_OK )
-						Local_enuErrorState = PWM_1_enuEnable();
-				}
-			}
-			else if(  Copy_u8MotorNum == MOTOR2 )
-			{
-				if( PWM_2_enuDisable( ) == ES_OK )
-				{
-					switch( Copy_u8MotorDirection )
-					{
-						case 		CLOCK_WISE_DIRECTION	:	Local_AenuErrorStates[0] = DIO_enuSetPinValue( H_A3_GRP , H_A3_PIN , DIO_u8LOW);
-																Local_AenuErrorStates[1] = DIO_enuSetPinValue( H_A4_GRP , H_A4_PIN , DIO_u8LOW);
-																Local_AenuErrorStates[2] = DIO_enuSetPinValue( H_A3_GRP , H_A3_PIN , DIO_u8HIGH);
-									break;
-
-						case COUNTER_CLOCK_WISE_DIRECTION	:	Local_AenuErrorStates[0] = DIO_enuSetPinValue( H_A4_GRP , H_A4_PIN , DIO_u8LOW);
-																Local_AenuErrorStates[1] = DIO_enuSetPinValue( H_A3_GRP , H_A3_PIN , DIO_u8LOW);
-																Local_AenuErrorStates[2] = DIO_enuSetPinValue( H_A4_GRP , H_A4_PIN , DIO_u8HIGH);
-									break;
-					}
+					case COUNTER_CLOCK_WISE_DIRECTION	:	Local_AenuErrorStates[0] = DIO_enuSetPinValue(	Motors[Local_u8Iter].B.PinGrp ,
+																											Motors[Local_u8Iter].B.PinNum ,	DIO_u8LOW);
+															Local_AenuErrorStates[1] = DIO_enuSetPinValue( 	Motors[Local_u8Iter].A.PinGrp ,
+																											Motors[Local_u8Iter].A.PinNum , DIO_u8LOW);
+															Local_AenuErrorStates[2] = DIO_enuSetPinValue( 	Motors[Local_u8Iter].B.PinGrp ,
+																											Motors[Local_u8Iter].B.PinNum , DIO_u8HIGH);
+															break;
 				}
 				if( Local_AenuErrorStates[0] == ES_OK && Local_AenuErrorStates[1] == ES_OK && Local_AenuErrorStates[2] == ES_OK )
-					Local_enuErrorState = PWM_2_enuEnable();
+					Local_enuErrorState = ES_OK;
 			}
-			else Local_enuErrorState = ES_OUT_RANGE;
+		}
 	}
 	else Local_enuErrorState = ES_OUT_RANGE;
 
@@ -126,32 +122,31 @@ ES_t Le93D_enuSetSpeed( u8 Copy_u8MotorNum , u8 Copy_u8MotorMaxSpeedPercentage) 
 {
 	ES_t Local_enuErrorState = ES_NOK;
 
-	switch( Copy_u8MotorMaxSpeedPercentage )
+	if( Copy_u8MotorMaxSpeedPercentage >=0 && Copy_u8MotorMaxSpeedPercentage <= 100 )
 	{
-	case 0	:	if( Copy_u8MotorNum == MOTOR1 )
+		for( u8 Local_u8Iter = 0 ; Local_u8Iter < Motors_u8MaxNum ; Local_u8Iter++ )
+		{
+			if( Motors[Local_u8Iter].MotorNum == Copy_u8MotorNum )
+			{
+				switch( Copy_u8MotorMaxSpeedPercentage )
 				{
-					Local_enuErrorState = DIO_enuSetPinValue( H_EN1_GRP , H_EN1_PIN , DIO_u8LOW);
+					case 0	:
+					case 100:	Local_enuErrorState = PWM_enuSetDutyCycle( Motors[Local_u8Iter].PWM , Copy_u8MotorMaxSpeedPercentage );
+								break;
+					default	:	{
+									f32 Local_f32Float = (f32) Copy_u8MotorMaxSpeedPercentage;
+									u32 Local_u32Integer = *( (u32 *) &Local_f32Float );
+									Local_u32Integer = 0x1FBD1DF5 + (Local_u32Integer >> 1); ////////////////////////////////////NEEDS RECALCULATION because of exponent term biasing
+									Local_f32Float = *( (f32 *) &Local_u32Integer );
+									u8 DutyCycle = Local_f32Float ;
+									Local_enuErrorState = PWM_enuSetDutyCycle( Motors[Local_u8Iter].PWM , DutyCycle );
+								}
+								break;
 				}
-				else if ( Copy_u8MotorNum == MOTOR2 )
-				{
-					Local_enuErrorState = DIO_enuSetPinValue( H_EN2_GRP , H_EN2_PIN , DIO_u8LOW);
-				}
-				break;
-	case 100:	if( Copy_u8MotorNum == MOTOR1 )
-				{
-					Local_enuErrorState = DIO_enuSetPinValue( H_EN1_GRP , H_EN1_PIN , DIO_u8HIGH);
-				}
-				else if ( Copy_u8MotorNum == MOTOR2 )
-				{
-					Local_enuErrorState = DIO_enuSetPinValue( H_EN2_GRP , H_EN2_PIN , DIO_u8HIGH);
-				}
-				break;
-	default	:	f32 Local_f32Sqrt = (f32) Copy_u8MotorMaxSpeedPercentage;
-				u32 DutyCycle = (u32) ( *( (f32 *) &( *( (u64 *) &Local_f32Sqrt ) >> 1 ) ) ) ;
-
-
-				break;
+			}
+		}
 	}
+	else Local_enuErrorState = ES_OUT_RANGE;
 
 	return Local_enuErrorState ;
 }
