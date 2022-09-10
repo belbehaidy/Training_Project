@@ -29,4 +29,12 @@ typedef enum {	TRUE,							/* TRUE  */
 #define NUL		'\0'							/*	NUL */
 #define NULL (void*)0x0							/* NULL */
 
+/*	Pin Type definition  */
+ typedef struct
+ {
+	u8 PinGrp;
+	u8 PinNum;
+ }Pin_t;
+
+
 #endif

@@ -19,7 +19,7 @@ static u8 Global_u8OCR0_Value = 0x00  , Global_u8OCR2_Value = 0x00 ;
 static u16 Global_u8OCR1A_Value = 0x0000 , Global_u8OCR1B_Value = 0x0000 ;
 static u32 Global_u32Timer0_Clk , Global_u32Timer1_Clk , Global_u32Timer2_Clk ;
 
-Int_Pointers_t Global_AstrPointers[TIMERS_INTERRUPTS] =	{
+TimerInt_Pointers_t Global_AstrTimerPointers[TIMERS_INTERRUPTS] =	{
 															{ TOIE0 ,	NULL, NULL},
 															{ OCIE0 ,	NULL, NULL},
 															{ TOIE1 ,	NULL, NULL},
@@ -332,7 +332,7 @@ ES_t Timer_enuGetClkSelect( u8 Copy_u8TimerNum , u16 *Copy_pu8TimerClkSelect )
 	return Local_enuErrorState ;
 }
 
-ES_t Timer_enuSetCOM_Mode( u8 Copy_u8TimerNum , u8 Copy_u8COM_Mode )
+ES_t Timer_enuSetOCn_Mode( u8 Copy_u8TimerNum , u8 Copy_u8COM_Mode )
 {
 	ES_t Local_enuErrorState = ES_NOK;
 
@@ -379,7 +379,7 @@ ES_t Timer_enuSetCOM_Mode( u8 Copy_u8TimerNum , u8 Copy_u8COM_Mode )
 	return ( (Local_enuErrorState == ES_NOK)? ES_OK : Local_enuErrorState ) ;
 }
 
-ES_t Timer_enuGetCOM_Mode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerCOM_Mode)
+ES_t Timer_enuGetOCn_Mode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerCOM_Mode)
 {
 	ES_t Local_enuErrorState = ES_OUT_RANGE ;
 
@@ -396,7 +396,7 @@ ES_t Timer_enuGetCOM_Mode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerCOM_Mode)
 }
 
 
-ES_t Timer_enuSetWGM_Mode( u8 Copy_u8TimerNum , u8 Copy_u8WGM_Mode )
+ES_t Timer_enuSetTimer_Mode( u8 Copy_u8TimerNum , u8 Copy_u8WGM_Mode )
 {
 	ES_t Local_enuErrorState = ES_NOK;
 
@@ -447,7 +447,7 @@ ES_t Timer_enuSetWGM_Mode( u8 Copy_u8TimerNum , u8 Copy_u8WGM_Mode )
 	return ( (Local_enuErrorState == ES_NOK)? ES_OK : Local_enuErrorState ) ;
 }
 
-ES_t Timer_enuGetWGM_Mode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerWGM_Mode)
+ES_t Timer_enuGetTimer_Mode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerWGM_Mode)
 {
 	ES_t Local_enuErrorState = ES_OUT_RANGE ;
 
@@ -483,6 +483,33 @@ ES_t Timer_enuReset( u8 Copy_u8TimerNum )
 	else if( Copy_u8TimerNum == TIMER2 )
 	{
 		TCNT2 = 0x00 ;
+	}
+	else Local_enuErrorState = ES_OUT_RANGE;
+
+	SREG = Local_u8Temp;										// Re-setting AVR Status Register to its Status
+
+	return ( (Local_enuErrorState == ES_NOK)? ES_OK : Local_enuErrorState ) ;
+}
+
+ES_t Timer_enuPreLoad( u8 Copy_u8TimerNum , u16 Copy_u16PreLoad) ///////////////////////////////////////////////////////////////////
+{
+	ES_t Local_enuErrorState = ES_NOK;
+
+	u8 Local_u8Temp = SREG ;									// Saving a Copy of AVR Status Register
+	asm( "CLI" );												// Disable All Interrupts while writing to Counter Register
+
+	if( Copy_u8TimerNum == TIMER0 )
+	{
+		TCNT0 = (u8)Copy_u16PreLoad ;
+	}
+	else if( Copy_u8TimerNum == TIMER1 || Copy_u8TimerNum == TIMER1A || Copy_u8TimerNum == TIMER1B )
+	{
+		TCNT1H = Copy_u16PreLoad >> 8 ;
+		TCNT1L = Copy_u16PreLoad ;
+	}
+	else if( Copy_u8TimerNum == TIMER2 )
+	{
+		TCNT2 = (u8)Copy_u16PreLoad ;
 	}
 	else Local_enuErrorState = ES_OUT_RANGE;
 
@@ -985,10 +1012,10 @@ ES_t Timer_enuCallBack( u8 Copy_u8TimerIntName , void (*Copy_pAppFun)(void*) , v
 	{
 		for( u8 Local_u8Iter; Local_u8Iter < TIMERS_INTERRUPTS ; Local_u8Iter++ )
 		{
-			if( Global_AstrPointers[Local_u8Iter].InterruptName == Copy_u8TimerIntName )
+			if( Global_AstrTimerPointers[Local_u8Iter].InterruptName == Copy_u8TimerIntName )
 			{
-				Global_AstrPointers[Local_u8Iter].ptrFun = Copy_pAppFun;
-				Global_AstrPointers[Local_u8Iter].ptrVar = Copy_pAppVar;
+				Global_AstrTimerPointers[Local_u8Iter].ptrFun = Copy_pAppFun;
+				Global_AstrTimerPointers[Local_u8Iter].ptrVar = Copy_pAppVar;
 				Local_enuErrorState = ES_OK ;
 				found = 1;
 				break;
@@ -1012,61 +1039,61 @@ void __vector_11( void )__attribute__((signal));	/*	Timer0	Overflow Interrupt	IS
 
 void __vector_4( void )/*	OCIE2	*/
 {
-	if( Global_AstrPointers[7].ptrFun != NULL )
+	if( Global_AstrTimerPointers[7].ptrFun != NULL )
 	{
-		(*Global_AstrPointers[7].ptrFun)( Global_AstrPointers[7].ptrVar );
+		(*Global_AstrTimerPointers[7].ptrFun)( Global_AstrTimerPointers[7].ptrVar );
 	}
 }
 
 void __vector_5( void )/*	TOIE2	*/
 {
-	if( Global_AstrPointers[6].ptrFun != NULL )
+	if( Global_AstrTimerPointers[6].ptrFun != NULL )
 	{
-		(*Global_AstrPointers[6].ptrFun)( Global_AstrPointers[6].ptrVar );
+		(*Global_AstrTimerPointers[6].ptrFun)( Global_AstrTimerPointers[6].ptrVar );
 	}
 }
 void __vector_6( void )/*	TICIE1	*/
 {
-	if( Global_AstrPointers[5].ptrFun != NULL )
+	if( Global_AstrTimerPointers[5].ptrFun != NULL )
 	{
-		(*Global_AstrPointers[5].ptrFun)( Global_AstrPointers[5].ptrVar );
+		(*Global_AstrTimerPointers[5].ptrFun)( Global_AstrTimerPointers[5].ptrVar );
 	}
 }
 void __vector_7( void )/*	OCIE1A	*/
 {
-	if( Global_AstrPointers[4].ptrFun != NULL )
+	if( Global_AstrTimerPointers[4].ptrFun != NULL )
 	{
-		(*Global_AstrPointers[4].ptrFun)( Global_AstrPointers[4].ptrVar );
+		(*Global_AstrTimerPointers[4].ptrFun)( Global_AstrTimerPointers[4].ptrVar );
 	}
 }
 void __vector_8( void )/*	OCIE1B	*/
 {
-	if( Global_AstrPointers[3].ptrFun != NULL )
+	if( Global_AstrTimerPointers[3].ptrFun != NULL )
 	{
-		(*Global_AstrPointers[3].ptrFun)( Global_AstrPointers[3].ptrVar );
+		(*Global_AstrTimerPointers[3].ptrFun)( Global_AstrTimerPointers[3].ptrVar );
 	}
 }
 void __vector_9( void )/*	TOIE1	*/
 {
-	if( Global_AstrPointers[2].ptrFun != NULL )
+	if( Global_AstrTimerPointers[2].ptrFun != NULL )
 	{
-		(*Global_AstrPointers[2].ptrFun)( Global_AstrPointers[2].ptrVar );
+		(*Global_AstrTimerPointers[2].ptrFun)( Global_AstrTimerPointers[2].ptrVar );
 	}
 }
 
 void __vector_10( void )/*	OCIE0	*/
 {
-	if( Global_AstrPointers[1].ptrFun != NULL )
+	if( Global_AstrTimerPointers[1].ptrFun != NULL )
 	{
-		(*Global_AstrPointers[1].ptrFun)( Global_AstrPointers[1].ptrVar );
+		(*Global_AstrTimerPointers[1].ptrFun)( Global_AstrTimerPointers[1].ptrVar );
 	}
 }
 
 void __vector_11( void )/*	TOIE0	*/
 {
-	if( Global_AstrPointers[0].ptrFun != NULL )
+	if( Global_AstrTimerPointers[0].ptrFun != NULL )
 	{
-		(*Global_AstrPointers[0].ptrFun)( Global_AstrPointers[0].ptrVar );
+		(*Global_AstrTimerPointers[0].ptrFun)( Global_AstrTimerPointers[0].ptrVar );
 	}
 }
 

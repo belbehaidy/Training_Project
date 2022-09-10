@@ -9,11 +9,11 @@
 #define APP_LM35_CONFIG_H_
 
 
-#define VSS_GRP					DIO_u8GROUP_C
-#define VSS_PIN					DIO_u8PIN1
+#define LM35_VSS_GRP			DIO_u8GROUP_C
+#define LM35_VSS_PIN			DIO_u8PIN1
 
-#define GROUND_GRP				DIO_u8GROUP_C
-#define GROUND_PIN				DIO_u8PIN0
+#define LM35_GROUND_GRP			DIO_u8GROUP_C
+#define LM35_GROUND_PIN			DIO_u8PIN0
 
 #define TEMP_VALUE_GRP			DIO_u8GROUP_A
 #define TEMP_VALUE_PIN			DIO_u8PIN0

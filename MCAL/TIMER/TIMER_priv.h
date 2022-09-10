@@ -14,7 +14,7 @@ typedef struct
 	u8 InterruptName;
 	void *ptrVar;
 	void (*ptrFun)(void *);
-}Int_Pointers_t;
+}TimerInt_Pointers_t;
 
 #define TIMERS_MAX_NUM				4
 #define TIMERS_INTERRUPTS			8

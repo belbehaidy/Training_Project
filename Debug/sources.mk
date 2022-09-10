@@ -28,6 +28,7 @@ HAL/LCD \
 HAL/LD \
 HAL/LM35 \
 HAL/SevSeg \
+HAL/StepMotor \
 HAL/Switch \
 MCAL/ADC \
 MCAL/DIO \
@@ -35,4 +36,5 @@ MCAL/EXTI \
 MCAL/GIE \
 MCAL/PWM \
 MCAL/TIMER \
+MCAL/UART \
 

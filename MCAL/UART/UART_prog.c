@@ -11,7 +11,7 @@
 #include "UART_priv.h"
 #include "UART_config.h"
 
-UART_Int_t Global_AstrPointers[UART_INTERRUPTS] =	{
+UART_Int_t Global_AstrUART_Pointers[UART_INTERRUPTS] =	{
 														{ RXCIE ,	NULL, NULL},
 														{ UDRIE ,	NULL, NULL},
 														{ TXCIE ,	NULL, NULL}
@@ -24,9 +24,17 @@ ES_t UART_enuInit( void )
 	ES_t Local_enuErrorState = ES_NOK;
 
 	UCSRC |= (BIT_MASK << URSEL_BIT );
-	UCSRC &= 0x80;
+	UCSRC &= 0x80 ;
+	UCSRB = 0x00 ;
+	UCSRA = 0x00 ;
+
+#if MULTI_PROCESSOR == MPCM_ON
+	UCSRC |= (BIT_MASK << URSEL_BIT );
+	UCSRA |= (BIT_MASK << MPCM_BIT );
+#endif
 
 #if SYNC_MODE == ASYNCHRONOUS
+	UCSRC |= (BIT_MASK << URSEL_BIT );
 	UCSRC &= ~(BIT_MASK << UMSEL_BIT );
 
 	#if OPERATING_MODE == NORMAL_SPEED
@@ -38,6 +46,7 @@ ES_t UART_enuInit( void )
 	#endif
 
 #elif SYNC_MODE == SYNCHRONOUS
+	UCSRC |= (BIT_MASK << URSEL_BIT );
 	UCSRC |= (BIT_MASK << UMSEL_BIT );
 
 	#if OPERATING_MODE == MASTER_SPEED
@@ -49,6 +58,32 @@ ES_t UART_enuInit( void )
 
 #else
 #error " UART_enuInit(): Unidentified Synchronization Mode. "
+#endif
+	UCSRA &= 0x03;
+
+#if DATA_BITS >= FIVE_BITS && DATA_BITS <= EIGHT_BITS
+	UCSRC |= (BIT_MASK << URSEL_BIT );
+	UCSRC |= ( ( DATA_BITS - FIVE_BITS )& TWO_BITS_MASK ) << UCSZ0_BIT ;
+#elif DATA_BITS == NINE_BITS
+	UCSRB |= (BIT_MASK << UCSZ2_BIT );
+	UCSRC |= (BIT_MASK << URSEL_BIT );
+	UCSRC |= (TWO_BITS_MASK << UCSZ0_BIT ; ////////////////////////////////////////
+#endif
+
+
+
+
+
+
+	#if UART_MODE == TRANSMITTER
+	UCSRB |= ( BIT_MASK << TXEN_BIT );
+#elif UART_MODE == RECIEVER
+	UCSRB |= ( BIT_MASK << RXEN_BIT );
+#elif UART_MODE == TRANSCEIVER
+	UCSRB |= ( BIT_MASK << TXEN_BIT );
+	UCSRB |= ( BIT_MASK << RXEN_BIT );
+#else
+#warning " UART_enuInit(): Unidentified UART Mode. Disabled UART "
 #endif
 
 
@@ -122,10 +157,10 @@ ES_t UART_enuCallBack( u8 Copy_u8InterruptName , void ( *Copy_pAppFun(void *) ) 
 		u8 Local_u8Iter = 0 ;
 		for( ; Local_u8Iter < UART_INTERRUPTS ; Local_u8Iter++ )
 		{
-			if( Global_AstrPointers[Local_u8Iter].InterruptName == Copy_u8InterruptName )
+			if( Global_AstrUART_Pointers[Local_u8Iter].InterruptName == Copy_u8InterruptName )
 			{
-				Global_AstrPointers[Local_u8Iter].ptrFun = Copy_pAppFun ;
-				Global_AstrPointers[Local_u8Iter].ptrVar = Copy_pAppVar ;
+				Global_AstrUART_Pointers[Local_u8Iter].ptrFun = Copy_pAppFun ;
+				Global_AstrUART_Pointers[Local_u8Iter].ptrVar = Copy_pAppVar ;
 				Local_enuErrorState = ES_OK;
 				break;
 			}
@@ -149,24 +184,24 @@ void __vector_15( void )__attribute__((signal));
 
 void __vector_13( void )	/*	RXCIE : RX Complete Interrupt	*/
 {
-	if( Global_AstrPointers[0] != NULL)
+	if( Global_AstrUART_Pointers[0].ptrFun != NULL)
 	{
-		(*(Global_AstrPointers[0].ptrFun))(Global_AstrPointers.ptrVar);
+		( *Global_AstrUART_Pointers[0].ptrFun )( Global_AstrUART_Pointers[0].ptrVar );
 	}
 }
 
 void __vector_14( void )	/*	UDRE : UDR register Empty Interrupt	*/
 {
-	if( Global_AstrPointers[1] != NULL)
+	if( Global_AstrUART_Pointers[1].ptrFun != NULL)
 	{
-		(*(Global_AstrPointers[1].ptrFun))(Global_AstrPointers.ptrVar);
+		( *Global_AstrUART_Pointers[1].ptrFun )( Global_AstrUART_Pointers[1].ptrVar );
 	}
 }
 
 void __vector_15( void )	/*	TXCIE : TX Complete Interrupt	*/
 {
-	if( Global_AstrPointers[2] != NULL)
+	if( Global_AstrUART_Pointers[2].ptrFun != NULL)
 	{
-		(*(Global_AstrPointers[2].ptrFun))(Global_AstrPointers.ptrVar);
+		( *Global_AstrUART_Pointers[2].ptrFun)( Global_AstrUART_Pointers[2].ptrVar );
 	}
 }

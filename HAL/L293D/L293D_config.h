@@ -15,12 +15,6 @@
 
 typedef struct
 {
-	u8 PinGrp;
-	u8 PinNum;
-}Pin_t;
-
-typedef struct
-{
 	u8 MotorNum;
 	u8 PWM ;
 	Pin_t EN;

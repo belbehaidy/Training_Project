@@ -17,6 +17,7 @@ typedef struct
 
 #define UART_INTERRUPTS		3
 #define BIT_MASK			0x1
+#define TWO_BITS_MASK		0x3
 #define BYTE_SHIFT			8
 
 /********************************/
@@ -80,20 +81,26 @@ typedef struct
 #define TX_RISING			61
 #define RX_RISING			62
 
+/********************************************/
+/*	MULTI PROCESSOR COMMUNICATION  OPTIONs	*/
+/********************************************/
+#define MPCM_OFF			70
+#define MPCM_ON				71
+
 /********************************************************************************/
 /*						USART I/O DATA REGISTER									*/
 /********************************************************************************/
 #define UDR			*((u8*)0x2C)
-#define TXB			UDR					/*	UDR Register in Transmit Mode		*/
-#define RXB			UDR					/*	UDR Register in Receive Mode		*/
+#define TXB				UDR				/*	UDR Register in Transmit Mode		*/
+#define RXB				UDR				/*	UDR Register in Receive Mode		*/
 
 
 /********************************************************************************/
 /*						USART CONTROL & STATUS  REGISTER A						*/
 /********************************************************************************/
 #define UCSRA		*((u8*)0x2B)
-#define MPCM_BIT		0				/*	Multi-processor Communication Mode	*/
-#define U2X_BIT			1				/*	Double the USART Transmission Speed	*/
+#define MPCM_BIT		0				/*	Multi-processor Communication Mode	*/	//	This bit enables the Multi-processor Communication mode
+#define U2X_BIT			1				/*	Double the USART Transmission Speed	*/	//	This bit only has effect for the asynchronous operation
 #define PE_BIT			2				/*	Parity Error Flag					*/
 #define	DOR_BIT			3				/*	Data OverRun Flag					*/
 #define	FE_BIT			4				/*	Frame Error Flag					*/
@@ -132,7 +139,7 @@ typedef struct
 /********************************************************************************/
 /*							USART BAUD RATE REGISTERs							*/
 /********************************************************************************/
-#define UBRRH		*((u8*)0x40)		/*	Lower 4-bits along with UBRRL is a	*/
+#define UBRRH		*((u8*)0x40)		/*	Lower 4-bits along with UBRRL is a	*/	//	Has to be Written First
 #define UBRRL		*((u8*)0x29)		/*	12-bit Register for Baud rate Value	*/	// Once written will trigger an immediate update of Baud rate
 
 

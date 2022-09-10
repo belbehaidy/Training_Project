@@ -16,13 +16,13 @@ ES_t LM35_enuInit(void)
 {
 	ES_t Local_enuErrorState = ES_NOK , Local_AenuErrorState[2];
 
-	Local_AenuErrorState[0] = DIO_enuSetPinDirection( VSS_GRP , VSS_PIN , DIO_u8OUTPUT);
-	Local_AenuErrorState[1] = DIO_enuSetPinValue( VSS_GRP , VSS_PIN , DIO_u8HIGH);
+	Local_AenuErrorState[0] = DIO_enuSetPinDirection( LM35_VSS_GRP , LM35_VSS_PIN , DIO_u8OUTPUT);
+	Local_AenuErrorState[1] = DIO_enuSetPinValue( LM35_VSS_GRP , LM35_VSS_PIN , DIO_u8HIGH);
 
 	if( Local_AenuErrorState[0] == ES_OK && Local_AenuErrorState[1] == ES_OK )
 	{
-		Local_AenuErrorState[0] = DIO_enuSetPinDirection( GROUND_GRP , GROUND_PIN , DIO_u8OUTPUT );
-		Local_AenuErrorState[1] = DIO_enuSetPinValue( GROUND_GRP , GROUND_PIN , DIO_u8LOW);
+		Local_AenuErrorState[0] = DIO_enuSetPinDirection( LM35_GROUND_GRP , LM35_GROUND_PIN , DIO_u8OUTPUT );
+		Local_AenuErrorState[1] = DIO_enuSetPinValue( LM35_GROUND_GRP , LM35_GROUND_PIN , DIO_u8LOW);
 
 		if( Local_AenuErrorState[0] == ES_OK && Local_AenuErrorState[1] == ES_OK )
 		{
