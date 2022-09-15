@@ -61,13 +61,13 @@
 
 ES_t UART_enuInit( void );
 
-ES_t UART_ReceiveChar( u8 *Copy_u8Data);
+ES_t UART_ReceiveFrame( void *Copy_pReceivedData);
 
-ES_t UART_SendChar( u8 Copy_u8Data);
+ES_t UART_SendFrame( void *Copy_pData);
 
-ES_t UART_enuSendString(const char* Copy_pcData);
+ES_t UART_enuSendPacket( void *Copy_pcData );
 
-ES_t UART_enuRecieveString(char * Copy_pcData);
+ES_t UART_enuRecievePacket(void *Copy_pcData);
 
 ES_t UART_enuCallBack(  u8 Copy_u8InterruptName , void ( *Copy_pAppFun(void *) ) , void *Copy_pAppVar );
 

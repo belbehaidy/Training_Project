@@ -15,15 +15,18 @@ typedef struct
 	void (*ptrFun)(void *);
 }UART_Int_t;
 
+#define CPU_CLOCK			16000000UL
+
 #define UART_INTERRUPTS		3
-#define BIT_MASK			0x1
-#define TWO_BITS_MASK		0x3
+#define BIT_MASK			0x01
+#define TWO_BITS_MASK		0x03
+#define NIBBLE_MASK			0x0F
 #define BYTE_SHIFT			8
 
 /********************************/
 /*	UBRR VALUE CALCULATOR MACRO	*/
 /********************************/
-#define UBRR_VALUE(BAUD_RATE)		(u16)( ( (CPU_CLOCK * OPERATING_MODE) / ( 16 * BAUD_RATE ) -1 )
+#define UBRR_VALUE(BAUD_RATE)		(u16)( ( ( CPU_CLOCK * OPERATING_MODE) / ( 16 * BAUD_RATE ) ) - 1 )
 
 /********************************/
 /*	OPERATING MODE  OPTIONs		*/
@@ -36,8 +39,8 @@ typedef struct
 /*			UART MODEs			*/
 /********************************/
 #define TRANSMITTER			10
-#define RECIEVER			11
-#define TRANSCIEVER			12
+#define RECEIVER			11
+#define TRANSCEIVER			12
 
 /********************************/
 /*		DATA BITs OPTIONs		*/
@@ -77,9 +80,8 @@ typedef struct
 /********************************/
 /*	CLOCK POLARITY  OPTIONs		*/
 /********************************/
-#define NO_POLARITY			60
-#define TX_RISING			61
-#define RX_RISING			62
+#define TX_RISING_EDGE		60
+#define RX_RISING_EDGE		61
 
 /********************************************/
 /*	MULTI PROCESSOR COMMUNICATION  OPTIONs	*/

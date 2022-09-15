@@ -10,16 +10,19 @@
 
 #include "..\..\Libraries\stdTypes.h"
 
+#define PWM		1
 
 typedef struct
 {
 	u8 InterruptName ;
 	void *ptrVar;
 	void (*ptrFun)(void *);
-}Int_Pointers_t;
+}PWM_Int_Pointers_t;
 
-#define TIMERS_MAX_NUM				4
-#define TIMERS_INTERRUPTS			8
+
+
+#define PWM_MAX_NUM				4
+#define PWM_INTERRUPTS			8
 #define CPU_CLOCK					16000000UL
 #define EXT_CLOCK					0xFFFFFFFF
 
@@ -35,9 +38,9 @@ typedef struct
 /****************************************/
 /*			Timers/Counters				*/
 /****************************************/
-#define	TIMER0				200			/*	Timer/Counter0	*/
-#define	TIMER1				210			/*	Timer/Counter1	*/
-#define	TIMER2				203			/*		Timer2		*/
+//#define	TIMER0				200			/*	Timer/Counter0	*/
+//#define	TIMER1				210			/*	Timer/Counter1	*/
+//#define	TIMER2				203			/*		Timer2		*/
 #define TIMER1A				201			/*	Counter1A		*/
 #define TIMER1B				202			/*	Counter1B		*/
 
@@ -95,15 +98,18 @@ typedef struct
 /********************************************************************************************/
 /*								 Timer Interrupt Names										*/
 /********************************************************************************************/
+#if PWM==0
 #define TOIE0				60			/* Timer/Counter0 Overflow Interrupt				*/
 #define OCIE0				61			/* Timer/Counter0 Output Compare Match Interrupt	*/
+#define TOIE2				66			/* Timer/Counter2 Overflow Interrupt				*/
+#define OCIE2				67			/* Timer/Counter2 Output Compare Match Interrupt 	*/
+#endif
 #define TOIE1				62			/* Timer/Counter1 Overflow Interrupt				*/
 #define OCIE1B				63			/* Timer/Counter1 Output Compare Match B Interrupt	*/
 #define OCIE1A				64			/* Timer/Counter1 Output Compare Match A Interrupt	*/
 #define TICIE1				65			/* Timer/Counter1 I/P Capture Interrupt				*/
-#define TOIE2				66			/* Timer/Counter2 Overflow Interrupt				*/
-#define OCIE2				67			/* Timer/Counter2 Output Compare Match Interrupt 	*/
 
+#if PWM == 0
 /************************************************************************************************************/
 /* 										TIMER/Counter0 Registers											*/
 /************************************************************************************************************/
@@ -128,6 +134,8 @@ typedef struct
 #define TCNT0				*((volatile u8*)0x52)		/*		Timer/Counter0 Counter Register				*/
 #define OCR0_ADDRESS		0x3C
 #define OCR0				*((volatile u8*)0x5C)		/*		Timer/Counter0 Output Compare Register		*/
+
+#endif
 
 /************************************************************************************************************/
 /* 										TIMER/Counter1 Registers											*/
@@ -186,6 +194,8 @@ typedef struct
 #define ICR1L_ADDRESS		0x26
 #define ICR1L				*((volatile u8*)0x46)		/*	Timer/Counter1 I/P Capture Register Low Byte	*/
 
+#if PWM ==0
+
 /************************************************************************************************************/
 /* 										TIMER/Counter2 Registers											*/
 /************************************************************************************************************/
@@ -220,45 +230,54 @@ typedef struct
 #define OCR2UB								1			/*	Timer2 Output Compare Register Update Busy Flag	*/
 #define TCR2UB								0			/*		Timer2 Control Register Update Busy Flag	*/
 
+#endif
+
+
 /********************************************************************************************************************/
 /*										TIMER/Counter Interrupt Mask  Register										*/
 /********************************************************************************************************************/
 #define TIMSK_ADDRESS		0x39
 #define TIMSK				*((volatile u8*)0x59)		/* Timer/Counter Interrupt Mask Register					*/
+#if PWM==0
 #define TOIE0_BIT							0			/* Timer/Counter0 Overflow Interrupt Enable bit				*/
 #define OCIE0_BIT							1			/* Timer/Counter0 Output Compare Match Interrupt Enable bit	*/
+#endif
 #define TOIE1_BIT							2			/* Timer/Counter1 Overflow Interrupt Enable bit				*/
 #define OCIE1B_BIT							3			/* Timer/Counter1B Output Compare Match Interrupt Enable bit*/
 #define OCIE1A_BIT							4			/* Timer/Counter1A Output Compare Match Interrupt Enable bit*/
 #define TICIE1_BIT							5			/* Timer/Counter1 I/P Capture Interrupt Enable bit			*/
+#if PWM==0
 #define TOIE2_BIT							6			/* Timer/Counter2 Overflow Interrupt Enable bit				*/
 #define OCIE2_BIT							7			/* Timer/Counter2 Output Compare Match Interrupt Enable bit	*/
-
-#define TC0_INT_EN_MASK						0x03
+#endif
+//#define TC0_INT_EN_MASK						0x03
 #define TC1_INT_EN_MASK						0x3C
-#define TC2_INT_EN_MASK						0xC0
+//#define TC2_INT_EN_MASK						0xC0
 
 /****************************************************************************************************/
 /*								TIMER/Counter Interrupt Flag  Register								*/
 /****************************************************************************************************/
 #define TIFR_ADDRESS		0x38
 #define TIFR				*((volatile u8*)0x58)		/* TIMER/Counter Interrupt Flag  Register	*/
+#if PWM==0
 #define TOV0_BIT							0			/* Timer/Counter0 Overflow Flag bit			*/
 #define OCF0_BIT							1			/* Timer/Counter0 Output Compare Flag bit	*/
+#endif
 #define TOV1_BIT							2			/* Timer/Counter1 Overflow Flag bit			*/
 #define OCF1B_BIT							3			/* Timer/Counter1 Output Compare 1B Flag bit*/
 #define OCF1A_BIT							4			/* Timer/Counter1 Output Compare 1A Flag bit*/
 #define ICF1_BIT							5			/* Timer/Counter1 I/P Capture Flag bit		*/
+#if PWM==0
 #define TOV2_BIT							6			/* Timer/Counter2 Overflow Flag bit			*/
 #define OCF2_BIT							7			/* Timer/Counter2 Output Compare Flag bit	*/
-
+#endif
 /****************************************************************************************************/
 /*								Special Function IO  Register										*/
 /****************************************************************************************************/
 #define SFIOR_ADDRESS		0x30
 #define SFIOR				*((volatile u8*)0x50)		/*	Special Function IO  Register			*/
 #define PSR10_BIT							0			/* Prescaler RESET Bit for Timer/Counter0&1	*/
-#define PSR2_BIT							1			/* Prescaler RESET Bit for Timer/Counter2	*/
+//#define PSR2_BIT							1			/* Prescaler RESET Bit for Timer/Counter2	*/
 
 #define SREG_ADDRESS		0x3F
 #define SREG				*((volatile u8*)0x5F)		/*			AVR Status Register				*/

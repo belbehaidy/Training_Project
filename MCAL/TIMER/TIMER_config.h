@@ -29,7 +29,7 @@ typedef struct
 #define TIMER0_BOTTOM	0x00
 #define TIMER0_MAX		0xFF
 
-
+#if MASK==0
 /************************************/
 /*	Timer/Counter1	Configuration	*/
 /************************************/
@@ -48,6 +48,7 @@ typedef struct
 #define TC1B_COM		COMP_NORMAL
 #define TC1B_INT		TC_POLLING
 
+#endif
 /************************************/
 /*		Timer2	Configuration		*/
 /************************************/

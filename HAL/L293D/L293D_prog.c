@@ -118,7 +118,7 @@ ES_t Le93D_enuSetDirectio( u8 Copy_u8MotorNum , u8 Copy_u8MotorDirection)
 	return Local_enuErrorState ;
 }
 
-ES_t Le93D_enuSetSpeed( u8 Copy_u8MotorNum , u8 Copy_u8MotorMaxSpeedPercentage) // three cases 0 -> EN = LOW , 100 -> EN = HIGH , Others Calc Duty from RMS value law
+ES_t Le93D_enuSetSpeed( u8 Copy_u8MotorNum , u8 Copy_u8MotorMaxSpeedPercentage) // three cases 0 -> EN = LOW , 100 -> EN = HIGH , Other Calculate Duty Cycle from RMS value law
 {
 	ES_t Local_enuErrorState = ES_NOK;
 
@@ -133,12 +133,8 @@ ES_t Le93D_enuSetSpeed( u8 Copy_u8MotorNum , u8 Copy_u8MotorMaxSpeedPercentage) 
 					case 0	:
 					case 100:	Local_enuErrorState = PWM_enuSetDutyCycle( Motors[Local_u8Iter].PWM , Copy_u8MotorMaxSpeedPercentage );
 								break;
-					default	:	{
-									f32 Local_f32Float = (f32) Copy_u8MotorMaxSpeedPercentage;
-									u32 Local_u32Integer = *( (u32 *) &Local_f32Float );
-									Local_u32Integer = 0x1FBD1DF5 + (Local_u32Integer >> 1); ////////////////////////////////////NEEDS RECALCULATION because of exponent term biasing
-									Local_f32Float = *( (f32 *) &Local_u32Integer );
-									u8 DutyCycle = Local_f32Float ;
+					default	:	{	/*	RMS = Amplitude * SQRT(Duty Cycle)	*/
+									f32 DutyCycle = ( Copy_u8MotorMaxSpeedPercentage * Copy_u8MotorMaxSpeedPercentage ) / 100.0 ;
 									Local_enuErrorState = PWM_enuSetDutyCycle( Motors[Local_u8Iter].PWM , DutyCycle );
 								}
 								break;

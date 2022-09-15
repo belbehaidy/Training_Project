@@ -122,7 +122,7 @@ ES_t PWM_enuSetInterruptMode( u8 Copy_u8TimerNum , u8 Copy_u8TimerInterruptMode 
 
 ES_t PWM_enuGetInterruptMode( u8 Copy_u8TimerNum , u8 *Copy_pu8TimerInterruptMode );//////////////////////////////////////
 
-ES_t PWM_enuSetDutyCycle( u8 Copy_u8TimerNum , u8 Copy_u8DutyCycle );////////////////////////////////////////////////////////
+ES_t PWM_enuSetDutyCycle( u8 Copy_u8TimerNum , f32 Copy_f32DutyCycle );////////////////////////////////////////////////////////
 
 //ES_t Timer_enuReset( u8 Copy_u8TimerNum );
 
@@ -136,12 +136,12 @@ ES_t PWM_enuSetICR1Value( u16 Copy_u16ICR1Value );
 
 //ES_t Timer_enuReadICR1Value( u16 *Copy_pu16ICR1Value );
 
-ES_t PWM_enuInterruptEnable( u8 Copy_u8TimerIntName);
+//ES_t PWM_enuInterruptEnable( u8 Copy_u8TimerIntName);
 
-ES_t PWM_enuInterruptDisable( u8 Copy_u8TimerIntName);
+//ES_t PWM_enuInterruptDisable( u8 Copy_u8TimerIntName);
 
-bool PWM_IsInterruptEnabled( u8 Copy_u8TimerIntName );
+//bool PWM_IsInterruptEnabled( u8 Copy_u8TimerIntName );
 
-ES_t PWM_enuCallBack( u8 Copy_u8TimerIntName , void (*Copy_pAppFun)(void*) , void *Copy_pAppVar);
+//ES_t PWM_enuCallBack( u8 Copy_u8TimerIntName , void (*Copy_pAppFun)(void*) , void *Copy_pAppVar);
 
 #endif /* MCAL_PWM_PWM_INT_H_ */

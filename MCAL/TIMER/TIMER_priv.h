@@ -8,6 +8,7 @@
 #ifndef MCAL_TIMER_TIMER_PRIV_H_
 #define MCAL_TIMER_TIMER_PRIV_H_
 
+#define MASK	1
 
 typedef struct
 {
@@ -16,8 +17,9 @@ typedef struct
 	void (*ptrFun)(void *);
 }TimerInt_Pointers_t;
 
-#define TIMERS_MAX_NUM				4
-#define TIMERS_INTERRUPTS			8
+
+#define TIMERS_MAX_NUM				2
+#define TIMERS_INTERRUPTS			4
 #define CPU_CLOCK					16000000UL
 #define EXT_CLOCK					0xFFFFFFFF
 
@@ -34,11 +36,12 @@ typedef struct
 /*			Timers/Counters				*/
 /****************************************/
 #define	TIMER0				200			/*	Timer/Counter0	*/
-#define	TIMER1				210			/*	Timer/Counter1	*/
 #define	TIMER2				203			/*		Timer2		*/
+#if MASK==0
 #define TIMER1A				201			/*	Counter1A		*/
 #define TIMER1B				202			/*	Counter1B		*/
-
+#define	TIMER1				210			/*	Timer/Counter1	*/
+#endif
 /****************************************/
 /* 		Clock selection Options			*/
 /****************************************/
@@ -73,17 +76,20 @@ typedef struct
 #define TC_POLLING			40
 #define TC_OVERFLOW_INT		41
 #define TC_OUT_COMP_INT		42
+#if MASK==0
 #define TC1_INPUT_CAPT_INT	43
-
+#endif
 /********************************************************************************************/
 /*								 Timer Interrupt Names										*/
 /********************************************************************************************/
 #define TOIE0				60			/* Timer/Counter0 Overflow Interrupt				*/
 #define OCIE0				61			/* Timer/Counter0 Output Compare Match Interrupt	*/
+#if MASK==0
 #define TOIE1				62			/* Timer/Counter1 Overflow Interrupt				*/
 #define OCIE1B				63			/* Timer/Counter1 Output Compare Match B Interrupt	*/
 #define OCIE1A				64			/* Timer/Counter1 Output Compare Match A Interrupt	*/
 #define TICIE1				65			/* Timer/Counter1 I/P Capture Interrupt				*/
+#endif
 #define TOIE2				66			/* Timer/Counter2 Overflow Interrupt				*/
 #define OCIE2				67			/* Timer/Counter2 Output Compare Match Interrupt 	*/
 
@@ -109,6 +115,8 @@ typedef struct
 #define TCNT0				*((volatile u8*)0x52)		/*		Timer/Counter0 Counter Register				*/
 #define OCR0				*((volatile u8*)0x5C)		/*		Timer/Counter0 Output Compare Register		*/
 
+
+#if MASK==0
 /************************************************************************************************************/
 /* 										TIMER/Counter1 Registers											*/
 /************************************************************************************************************/
@@ -156,6 +164,8 @@ typedef struct
 #define ICR1H				*((volatile u8*)0x47)		/*	Timer/Counter1 I/P Capture Register High Byte	*/
 #define ICR1L				*((volatile u8*)0x46)		/*	Timer/Counter1 I/P Capture Register Low Byte	*/
 
+#endif
+
 /************************************************************************************************************/
 /* 										TIMER/Counter2 Registers											*/
 /************************************************************************************************************/
@@ -193,15 +203,17 @@ typedef struct
 #define TIMSK				*((volatile u8*)0x59)		/* Timer/Counter Interrupt Mask Register					*/
 #define TOIE0_BIT							0			/* Timer/Counter0 Overflow Interrupt Enable bit				*/
 #define OCIE0_BIT							1			/* Timer/Counter0 Output Compare Match Interrupt Enable bit	*/
+#if MASK==0
 #define TOIE1_BIT							2			/* Timer/Counter1 Overflow Interrupt Enable bit				*/
 #define OCIE1B_BIT							3			/* Timer/Counter1B Output Compare Match Interrupt Enable bit*/
 #define OCIE1A_BIT							4			/* Timer/Counter1A Output Compare Match Interrupt Enable bit*/
 #define TICIE1_BIT							5			/* Timer/Counter1 I/P Capture Interrupt Enable bit			*/
+#endif
 #define TOIE2_BIT							6			/* Timer/Counter2 Overflow Interrupt Enable bit				*/
 #define OCIE2_BIT							7			/* Timer/Counter2 Output Compare Match Interrupt Enable bit	*/
 
 #define TC0_INT_EN_MASK						0x03
-#define TC1_INT_EN_MASK						0x3C
+//#define TC1_INT_EN_MASK						0x3C
 #define TC2_INT_EN_MASK						0xC0
 
 /****************************************************************************************************/
@@ -210,10 +222,12 @@ typedef struct
 #define TIFR				*((volatile u8*)0x58)		/* TIMER/Counter Interrupt Flag  Register	*/
 #define TOV0_BIT							0			/* Timer/Counter0 Overflow Flag bit			*/
 #define OCF0_BIT							1			/* Timer/Counter0 Output Compare Flag bit	*/
+#if MASK==0
 #define TOV1_BIT							2			/* Timer/Counter1 Overflow Flag bit			*/
 #define OCF1B_BIT							3			/* Timer/Counter1 Output Compare 1B Flag bit*/
 #define OCF1A_BIT							4			/* Timer/Counter1 Output Compare 1A Flag bit*/
 #define ICF1_BIT							5			/* Timer/Counter1 I/P Capture Flag bit		*/
+#endif
 #define TOV2_BIT							6			/* Timer/Counter2 Overflow Flag bit			*/
 #define OCF2_BIT							7			/* Timer/Counter2 Output Compare Flag bit	*/
 

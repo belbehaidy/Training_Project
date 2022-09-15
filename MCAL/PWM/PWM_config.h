@@ -17,8 +17,9 @@ typedef struct
 	u8 CompOutMode;
 	u8 WaveGenMode;
 	u8 InterruptMode;
-}Timer_t;
+}PWM_t;
 
+#if PWM==0
 /************************************/
 /*	Timer/Counter0	Configuration	*/
 /************************************/
@@ -29,6 +30,7 @@ typedef struct
 #define TIMER0_BOTTOM	0x00
 #define TIMER0_MAX		0xFF
 
+#endif
 
 /************************************/
 /*	Timer/Counter1	Configuration	*/
@@ -48,6 +50,7 @@ typedef struct
 #define TC1B_COM		COMP_NORMAL
 #define TC1B_INT		TC_POLLING
 
+#if PWM==0
 /************************************/
 /*		Timer2	Configuration		*/
 /************************************/
@@ -57,6 +60,6 @@ typedef struct
 #define TC2_INT			TC_POLLING
 #define TIMER2_BOTTOM	0x00
 #define TIMER2_MAX		0xFF
-
+#endif
 
 #endif /* MCAL_PWM_PWM_CONFIG_H_ */
